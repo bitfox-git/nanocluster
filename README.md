@@ -115,4 +115,4 @@ ff02::2      ip6-allrouters
 10.12.14.254 pi
 ```
 
-Now, we can login with `ssh root@neo1` and the `dietpi` password. 
+Now, enable ipv4 forwarding with `sudo sysctl -w net.ipv4.ip_forward=1` and login with `ssh root@neo1` and the `dietpi` password. 
