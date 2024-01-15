@@ -28,3 +28,30 @@ Then we can use [Gnome Disks](https://apps.gnome.org/en-GB/DiskUtility/) to *res
 
 ### Network configuration
 
+We use the hostname `neo` with the host nuber added from the static ip adress in `10.12.14.0/24`. For example `neo1` with `10.12.14.1`. The network configuration files are in the `/etc/network` folder. We changed the `interfaces` to:
+
+```
+source interfaces.d/*
+
+auto lo
+iface lo inet loopback
+
+auto lo
+iface lo inet6 loopback
+```
+
+and we created `eth0` in `/etc/network/interfaces.d/`:
+
+```
+auto eth0
+
+iface eth0 inet static
+  address 10.12.14.1
+  netmask 255.255.255.0
+  gateway 10.12.14.254
+  dns-nameservers 1.1.1.1 8.8.8.8 9.9.9.9
+
+iface eth0 inet6 auto
+```
+
+
