@@ -54,4 +54,4 @@ iface eth0 inet static
 iface eth0 inet6 auto
 ```
 
-
+Please, mount the SD card and run `config.sh` in the mounted directory with a host number as argument. For example: `sh ~/nanocluster/config.sh 1`. 
