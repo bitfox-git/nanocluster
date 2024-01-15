@@ -114,3 +114,5 @@ ff02::2      ip6-allrouters
 10.12.14.6   neo6
 10.12.14.254 pi
 ```
+
+Now, we can login with `ssh root@neo1` and the `dietpi` password. 
