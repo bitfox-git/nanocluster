@@ -55,3 +55,62 @@ iface eth0 inet6 auto
 ```
 
 Please, mount the SD card and run `config.sh` in the mounted directory with a host number as argument. For example: `sh ~/nanocluster/config.sh 1`. 
+
+#### Routing
+
+We connected a raspbery pi with wifi to the cluster switch. In raspbery PI OS edit the `/etc/nftables.conf` file so that it look like this:
+
+```bash
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+table ip nat {
+        chain prerouting {
+                type nat hook prerouting priority 0;
+        }
+
+        chain postrouting {
+                type nat hook postrouting priority 100;
+                masquerade
+        }
+}
+
+table inet filter {
+        chain input {
+                type filter hook input priority filter;
+        }
+        chain forward {
+                type filter hook forward priority filter;
+                policy drop;
+
+                # Allow established/related connections
+                ct state established,related accept
+
+                # Allow forwarding from wlan0 to eth0
+                iifname "wlan0" oifname "eth0" accept
+        }
+        chain output {
+                type filter hook output priority filter;
+        }
+}
+```
+
+and restart the firewall with `sudo systemctl restart nftables`. Use the network manager on the raspbery pi to add a static ip address `10.12.14.254` to `eth0` and add the nodes to the *hosts* file:
+
+```
+127.0.0.1    localhost
+::1          localhost ip6-localhost ip6-loopback
+ff02::1      ip6-allnodes
+ff02::2      ip6-allrouters
+
+127.0.1.1    pi
+
+10.12.14.1   neo1
+10.12.14.2   neo2
+10.12.14.3   neo3
+10.12.14.4   neo4
+10.12.14.5   neo5
+10.12.14.6   neo6
+10.12.14.254 pi
+```
