@@ -151,4 +151,4 @@ Use `ufw` to route/forward through the firewall:
 sudo ufw route allow in on eth0 out on wlan0
 ```
 
-And login with `ssh root@neo1` and the `dietpi` password. 
+And login with `ssh root@10.12.14.1` and the `dietpi` password. 
