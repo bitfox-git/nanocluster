@@ -22,13 +22,12 @@ The NanoPI Neo3 cluster is built using the following hardware:
 ## Software
 ### Operating System
 
-We use the [official debian bookworm image](https://drive.google.com/drive/folders/1_sdgoOb8s5yJn3KVmAKn7AkIrN9bM7-g) from [Google Drive](https://drive.google.com/drive/folders/1_sdgoOb8s5yJn3KVmAKn7AkIrN9bM7-g) as mentioned in the [wiki](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_NEO3#Downloads). 
-After that we *extract* the image from the archive (.img.gz) with the file manager. 
-Then we can use [Gnome Disks](https://apps.gnome.org/en-GB/DiskUtility/) to *restore* the image to the SD cards.
+The nodes uses the [official debian bookworm image](https://drive.google.com/drive/folders/1_sdgoOb8s5yJn3KVmAKn7AkIrN9bM7-g) from [Google Drive](https://drive.google.com/drive/folders/1_sdgoOb8s5yJn3KVmAKn7AkIrN9bM7-g) as mentioned in the [wiki](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_NEO3#Downloads).
+Please, *extract* the image from the archive (.img.gz) with a file manager before *restoring* it with [Gnome Disks](https://apps.gnome.org/en-GB/DiskUtility/) to the SD cards.
 
-### Network configuration
+### Network configuration on the nodes
 
-We use the hostname `neo` with the host nuber added from the static ip adress in `10.12.14.0/24`. For example `neo1` with `10.12.14.1`. The network configuration files are in the `/etc/network` folder. We changed the `interfaces` to:
+The hostname of the nodes is `neo` with the host nuber of the ip address in `10.12.14.0/24`. For example `neo1` with `10.12.14.1`. The network configuration files are in the `/etc/network` folder. Please, change the `interfaces` to:
 
 ```
 source interfaces.d/*
@@ -40,7 +39,7 @@ auto lo
 iface lo inet6 loopback
 ```
 
-and we created `eth0` in `/etc/network/interfaces.d/`:
+And create `eth0` in `/etc/network/interfaces.d/`:
 
 ```
 auto eth0
@@ -54,49 +53,72 @@ iface eth0 inet static
 iface eth0 inet6 auto
 ```
 
-Please, mount the SD card and run `config.sh` in the mounted directory with a host number as argument. For example: `sh ~/nanocluster/config.sh 1`. 
+> It is also posseble to use the [config script](./config.sh) like this: `sh ~/nanocluster/config.sh 1`.
 
-#### Routing
+### Workstacion
 
-We connected a raspbery pi with wifi to the cluster switch. In raspbery PI OS edit the `/etc/nftables.conf` file so that it look like this:
+I use a Raspbery Pi 5 as a development workstacion. It runs on [Alpine Linux](https://wiki.alpinelinux.org/wiki/Raspberry_Pi) with the Gnome desktop. Gnome uses Network Manager. So, remove `/etc/network/interfaces` so that Network Manager may manage the network interfaces. Otherwise the desktop things that you have no internet connection. 
 
-```bash
-#!/usr/sbin/nft -f
+#### Rasbery Pi configuration
 
-flush ruleset
+By default Alpine Linux has no Raspbery Pi configuration file. So, I copyied the default `config.txt` from the official Raspbery Pi OS and renamed it to `usercfg.txt`. Compair it with the default `config.txt` from Alpine Linux and remove dubble stuff from `usercfg.txt`. So that is looks like this:
 
-table ip nat {
-        chain prerouting {
-                type nat hook prerouting priority 0;
-        }
+```
+# For more options and information see
+# http://rptl.io/configtxt
+# Some settings may impact device functionality. See link above for details
 
-        chain postrouting {
-                type nat hook postrouting priority 100;
-                masquerade
-        }
-}
+# uncomment if you get no picture on HDMI for a default "safe" mode
+hdmi_safe=1
 
-table inet filter {
-        chain input {
-                type filter hook input priority filter;
-        }
-        chain forward {
-                type filter hook forward priority filter;
-                policy drop;
+# PI 5
+BOOT_UART=1
+POWER_OFF_ON_HALT=1
+BOOT_ORDER=0xf416
 
-                # Allow established/related connections
-                ct state established,related accept
+# Uncomment some or all of these to enable the optional hardware interfaces
+#dtparam=i2c_arm=on
+#dtparam=i2s=on
+#dtparam=spi=on
 
-                # Allow forwarding from wlan0 to eth0
-                iifname "wlan0" oifname "eth0" accept
-        }
-        chain output {
-                type filter hook output priority filter;
-        }
-}
+# Enable audio (loads snd_bcm2835)
+dtparam=audio=on
+
+# Additional overlays and parameters are documented
+# /boot/firmware/overlays/README
+
+# Automatically load overlays for detected cameras
+#camera_auto_detect=1
+
+# Automatically load overlays for detected DSI displays
+display_auto_detect=1
+
+# Enable DRM VC4 V3D driver
+dtoverlay=vc4-kms-v3d
+max_framebuffers=2
+
+# Don't have the firmware create an initial video= setting in cmdline.txt.
+# Use the kernel's default instead.
+disable_fw_kms_setup=1
+
+# Disable compensation for displays with overscan
+disable_overscan=1
+
+# Run as fast as firmware / board allows
+arm_boost=1
+
+[cm4]
+# Enable host mode on the 2711 built-in XHCI USB controller.
+# This line should be removed if the legacy DWC2 controller is required
+# (e.g. for USB device mode) or if USB support is not required.
+otg_mode=1
+
+[all]
 ```
 
-and restart the firewall with `sudo systemctl restart nftables`. Use the network manager on the raspbery pi to add a static ip address `10.12.14.254` to `eth0` and add the nodes to the *hosts* file:
+#### Workstation Network configuration
+
+Maunaly set the IP address to `10.12.14.254` using the Network Manager and the nodes to the `hosts` file (`/etc/hosts`):
 
 ```
 127.0.0.1    localhost
@@ -115,4 +137,18 @@ ff02::2      ip6-allrouters
 10.12.14.254 pi
 ```
 
-Now, enable ipv4 forwarding with `sudo sysctl -w net.ipv4.ip_forward=1` and login with `ssh root@neo1` and the `dietpi` password. 
+Enable ip forwarding with `sysctl`:
+
+```
+sudo sysctl -w net.ipv4.ip_forward=1
+sudo sysctl -w net.ipv6.conf.default.forwarding=1
+sudo sysctl -w net.ipv6.conf.all.forwarding=1
+```
+
+Use `ufw` to route/forward through the firewall:
+
+```
+sudo ufw route allow in on eth0 out on wlan0
+```
+
+And login with `ssh root@neo1` and the `dietpi` password. 
