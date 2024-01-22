@@ -151,7 +151,7 @@ Use `ufw` to route/forward through the firewall:
 sudo ufw allow out on eth0
 ```
 
-Enable NAT by editing `/etc/ufw/before.rules'. Add the following lines at the end of the nat table section:
+Enable NAT by editing `/etc/ufw/before.rules`. Add the following lines at the end of the nat table section:
 
 ```
 *nat
