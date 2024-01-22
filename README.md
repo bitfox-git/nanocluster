@@ -148,7 +148,16 @@ sudo sysctl -w net.ipv6.conf.all.forwarding=1
 Use `ufw` to route/forward through the firewall:
 
 ```
-sudo ufw route allow in on eth0 out on wlan0
+sudo ufw allow out on eth0
+```
+
+Enable NAT by editing `/etc/ufw/before.rules'. Add the following lines at the end of the nat table section:
+
+```
+*nat
+:POSTROUTING ACCEPT [0:0]
+-A POSTROUTING -s 10.12.14.0/24 -o wlan0 -j MASQUERADE
+COMMIT
 ```
 
 And login with `ssh root@10.12.14.1` and the `dietpi` password. 
