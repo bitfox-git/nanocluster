@@ -148,7 +148,8 @@ sudo sysctl -w net.ipv6.conf.all.forwarding=1
 Use `ufw` to route/forward through the firewall:
 
 ```
-sudo ufw allow out on eth0
+sudo ufw route allow in on eth0 out on wlan0
+sudo ufw default allow routed
 ```
 
 Enable NAT by editing `/etc/ufw/before.rules`. Add the following lines at the end of the nat table section:
