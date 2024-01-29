@@ -141,24 +141,36 @@ Enable ip forwarding with `sysctl`:
 
 ```
 sudo sysctl -w net.ipv4.ip_forward=1
-sudo sysctl -w net.ipv6.conf.default.forwarding=1
 sudo sysctl -w net.ipv6.conf.all.forwarding=1
 ```
 
-Use `ufw` to route/forward through the firewall:
+or create a `/etc/sysctl.d/ipforward.conf` file to make it permanent:
+
+```
+net.ipv4.ip_forward=1
+net.ipv6.conf.all.forwarding=1
+```
+
+Use `ufw` to route/forward through the firewall and reload:
 
 ```
 sudo ufw route allow in on eth0 out on wlan0
 sudo ufw default allow routed
+sudo ufw reload
 ```
 
-Enable NAT by editing `/etc/ufw/before.rules`. Add the following lines at the end of the nat table section:
+Make sure that the `sudo ufw status verbose` looks like this:
 
 ```
-*nat
-:POSTROUTING ACCEPT [0:0]
--A POSTROUTING -s 10.12.14.0/24 -o wlan0 -j MASQUERADE
-COMMIT
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), allow (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+Anywhere on wlan0          ALLOW FWD   Anywhere on eth0          
+Anywhere (v6) on wlan0     ALLOW FWD   Anywhere (v6) on eth0
 ```
 
-And login with `ssh root@10.12.14.1` and the `dietpi` password. 
+If the routing is enabled and allowd then login with `ssh root@10.12.14.1` and the `dietpi` password. 
