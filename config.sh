@@ -3,9 +3,9 @@
 echo "allow-hotplug eth0
 
 iface eth0 inet static
-  address 10.12.14.${1}
+  address 192.168.107.10${1}
   netmask 255.255.255.0
-  gateway 10.12.14.254
+  gateway 192.168.107.1
   dns-nameservers 1.1.1.1 8.8.8.8 9.9.9.9
 
 iface eth0 inet6 auto
@@ -36,5 +36,3 @@ ff02::2    ip6-allrouters
 
 127.0.1.1  neo${1}
 " > etc/hosts
-
-
