@@ -27,7 +27,7 @@ Please, *extract* the image from the archive (.img.gz) with a file manager befor
 
 ### Cluster Network configuration
 
-The hostname of the nodes is `neo` with the host nuber of the ip address in `10.12.14.0/24`. For example `neo1` with `10.12.14.1`. The network configuration files are in the `/etc/network` folder. Please, change the `interfaces` to:
+The hostname of the nodes is `neo` with the host nuber of the ip address in `192.168.107.100/24`. For example `neo1` with `192.168.107.101`. The network configuration files are in the `/etc/network` folder. Please, change the `interfaces` to:
 
 ```
 source interfaces.d/*
@@ -45,9 +45,9 @@ And create `eth0` in `/etc/network/interfaces.d/`:
 auto eth0
 
 iface eth0 inet static
-  address 10.12.14.1
+  address 192.168.107.101
   netmask 255.255.255.0
-  gateway 10.12.14.254
+  gateway 192.168.107.1
   dns-nameservers 1.1.1.1 8.8.8.8 9.9.9.9
 
 iface eth0 inet6 auto
@@ -118,7 +118,7 @@ otg_mode=1
 
 ### Network configuration
 
-Maunaly set the IP address to `10.12.14.254` using the Network Manager and the nodes to the `hosts` file (`/etc/hosts`):
+Maunaly set the IP address to `192.168.107.1` using the Network Manager and the nodes to the `hosts` file (`/etc/hosts`):
 
 ```
 127.0.0.1    localhost
@@ -128,14 +128,14 @@ ff02::2      ip6-allrouters
 
 127.0.1.1    pi
 
-10.12.14.1   neo1
-10.12.14.2   neo2
-10.12.14.3   neo3
-10.12.14.4   neo4
-10.12.14.5   neo5
-10.12.14.6   neo6
+192.168.107.101   neo1
+192.168.107.102   neo2
+192.168.107.103   neo3
+192.168.107.104   neo4
+192.168.107.105   neo5
+192.168.107.106   neo6
 
-10.12.14.254 pi
+192.168.107.1 pi
 ```
 
 Enable ip forwarding with `sysctl`:
@@ -182,7 +182,7 @@ Put this **before the required filter lines** in `/etc/ufw/before.rules` to enab
 :POSTROUTING ACCEPT [0:0]
 ```
 
-If routing and NAT are enabled then login with `ssh root@10.12.14.1` and the `dietpi` password. 
+If routing and NAT are enabled then login with `ssh root@192.168.107.101` and the `dietpi` password. 
 
 ## DietPi Setup
 
