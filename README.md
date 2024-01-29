@@ -134,6 +134,7 @@ ff02::2      ip6-allrouters
 10.12.14.4   neo4
 10.12.14.5   neo5
 10.12.14.6   neo6
+
 10.12.14.254 pi
 ```
 
@@ -186,6 +187,15 @@ If routing and NAT are enabled then login with `ssh root@10.12.14.1` and the `di
 ## DietPi Setup
 
 `DietPi-Update` will be executed when logging in for the first time. Use it to install the official DietPI dashboard on the first node. This will be our main node and Kubernetes controller. Also, install docker, k3s and a ssh client. The other nodes need only the DietPi dashboard API (and docker & k3s).
+
+### DietPi Dashboard
+
+Change the terminal user for DietPi Dashboard configuration to `dietpi` and add the nodes:
+
+```
+terminal_user = "dietpi"
+nodes = ["neo2:5252", "neo3:5252", "neo4:5252", "neo5:5252", "neo6:5252"]
+```
 
 ### SSH Keys
 
