@@ -173,4 +173,15 @@ Anywhere on wlan0          ALLOW FWD   Anywhere on eth0
 Anywhere (v6) on wlan0     ALLOW FWD   Anywhere (v6) on eth0
 ```
 
-If the routing is enabled and allowd then login with `ssh root@10.12.14.1` and the `dietpi` password. 
+Put this **before the required filter lines** in `/etc/ufw/before.rules` to enable NAT:
+
+```
+# NAT table rules
+*nat
+:POSTROUTING ACCEPT [0:0]
+
+# Forward traffic through the out-interface
+-A POSTROUTING -s 10.12.14.0/24 -o wlan0 -j MASQUERADE
+```
+
+If routing and NAT are enabled then login with `ssh root@10.12.14.1` and the `dietpi` password. 
