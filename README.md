@@ -185,7 +185,7 @@ If routing and NAT are enabled then login with `ssh root@10.12.14.1` and the `di
 
 ## DietPi Setup
 
-`DietPi-Update` will be executed when logging in for the first time. Use it to install the official DietPI dashboard on the first node. This will be our main node and Kubernetes controller. Also, install docker, k3s and a ssh client. The other nodes need only the DietPi dashboard API (and docker & k3s). 
+`DietPi-Update` will be executed when logging in for the first time. Use it to install the official DietPI dashboard on the first node. This will be our main node and Kubernetes controller. Also, install docker, k3s and a ssh client. The other nodes need only the DietPi dashboard API (and docker & k3s).
 
 ### SSH Keys
 
@@ -200,3 +200,7 @@ And add it to the worker nodes:
 ```
 echo "ssh-ed25519 XXXXXXXXXXXXXXXXXXXXXXXX dietpi@neo1.local" >> /home/dietpi/.ssh/authorized_keys
 ```
+
+### Disable root login
+
+Edit the `/etc/passwd` file and change the shell from `/bin/bash` to `/usr/sbin/nologin` for the root user on every node.
