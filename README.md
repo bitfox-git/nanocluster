@@ -7,7 +7,7 @@ The NanoPI Neo3 cluster documentation project
 
 This project is a documentation project for the NanoPI Neo3 cluster. The NanoPI Neo3 is a small single board computer with a quad core ARM processor and 1GB of RAM. The NanoPI Neo3 is a low cost single board computer that is ideal for building a small cluster. The [NanoPI Neo3 is available from FriendlyElec](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_NEO3#Introduction).
 
-## Hardware
+## Cluster Hardware
 
 The NanoPI Neo3 cluster is built using the following hardware:
 
@@ -19,13 +19,13 @@ The NanoPI Neo3 cluster is built using the following hardware:
 ![NanoPI Neo3 Cluster - cables side](images/cluster2.jpg)
 ![NanoPI Neo3 Cluster - top](images/cluster3.jpg)
 
-## Software
+## Cluster Software
 ### Operating System
 
 The nodes uses the [official debian bookworm image](https://drive.google.com/drive/folders/1_sdgoOb8s5yJn3KVmAKn7AkIrN9bM7-g) from [Google Drive](https://drive.google.com/drive/folders/1_sdgoOb8s5yJn3KVmAKn7AkIrN9bM7-g) as mentioned in the [wiki](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_NEO3#Downloads).
 Please, *extract* the image from the archive (.img.gz) with a file manager before *restoring* it with [Gnome Disks](https://apps.gnome.org/en-GB/DiskUtility/) to the SD cards.
 
-### Network configuration on the nodes
+### Cluster Network configuration
 
 The hostname of the nodes is `neo` with the host nuber of the ip address in `10.12.14.0/24`. For example `neo1` with `10.12.14.1`. The network configuration files are in the `/etc/network` folder. Please, change the `interfaces` to:
 
@@ -55,11 +55,11 @@ iface eth0 inet6 auto
 
 > It is also posseble to use the [config script](./config.sh) like this: `sh ~/nanocluster/config.sh 1`.
 
-### Workstacion
+## Workstacion
 
 I use a Raspbery Pi 5 as a development workstacion. It runs on [Alpine Linux](https://wiki.alpinelinux.org/wiki/Raspberry_Pi) with the Gnome desktop. Gnome uses Network Manager. So, remove `/etc/network/interfaces` so that Network Manager may manage the network interfaces. Otherwise the desktop things that you have no internet connection. 
 
-#### Rasbery Pi configuration
+### Rasbery Pi configuration
 
 By default Alpine Linux has no Raspbery Pi configuration file. So, I copyied the default `config.txt` from the official Raspbery Pi OS and renamed it to `usercfg.txt`. Compair it with the default `config.txt` from Alpine Linux and remove dubble stuff from `usercfg.txt`. So that is looks like this:
 
@@ -116,7 +116,7 @@ otg_mode=1
 [all]
 ```
 
-#### Workstation Network configuration
+### Network configuration
 
 Maunaly set the IP address to `10.12.14.254` using the Network Manager and the nodes to the `hosts` file (`/etc/hosts`):
 
@@ -182,3 +182,7 @@ Put this **before the required filter lines** in `/etc/ufw/before.rules` to enab
 ```
 
 If routing and NAT are enabled then login with `ssh root@10.12.14.1` and the `dietpi` password. 
+
+## DietPi Setup
+
+`DietPi-Update` will be executed when logging in for the first time. Use it to install the official DietPI dashboard on the first node. This will be our main node and Kubernetes controller. Also, install docker and k3s. 
