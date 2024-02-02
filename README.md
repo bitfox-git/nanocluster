@@ -152,7 +152,7 @@ sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 It is nice to have SSH keys to connect from the manager node to the worker nodes. So, create one on the manager node:
 
 ```
-ssh-keygen -t ed25519 -C dietpi@neo1.local
+ssh-keygen -t ed25519 -C dietpi@neo1
 ```
 
 And add it to the worker nodes:
