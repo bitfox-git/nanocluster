@@ -58,7 +58,7 @@ iface eth0 inet6 auto
 
 > It is also posseble to use the [config script](./config.sh) like this: `sh ~/nanocluster/config.sh 1`.
 
-## Workstacion
+## Workstacion (optional)
 
 I use a Raspbery Pi 5 as a development workstacion. It runs on [Alpine Linux](https://wiki.alpinelinux.org/wiki/Raspberry_Pi) with the Gnome desktop. Gnome uses Network Manager. So, remove `/etc/network/interfaces` so that Network Manager may manage the network interfaces. Otherwise the desktop things that you have no internet connection. 
 
