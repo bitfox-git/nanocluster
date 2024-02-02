@@ -160,6 +160,24 @@ tls-san:
   - neo6
 ```
 
+Get the token on neo1:
+
+```
+sudo cat /var/lib/rancher/k3s/server/node-token
+```
+
+and use it to add the other nodes to the cluster:
+
+```
+curl -sfL https://get.k3s.io | K3S_URL=https://neo1:6443 K3S_TOKEN=<token> sh -
+```
+
+Verify the nodes on neo1:
+
+```
+kubectl get nodes
+```
+
 ### SSH Keys
 
 It is nice to have SSH keys to connect from the manager node to the worker nodes. So, create one on the manager node:
