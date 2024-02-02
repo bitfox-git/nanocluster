@@ -47,7 +47,7 @@ auto eth0
 iface eth0 inet static
   address 192.168.107.101
   netmask 255.255.255.0
-  gateway 192.168.107.1
+  gateway 192.168.107.107
   dns-nameservers 1.1.1.1 8.8.8.8 9.9.9.9
 
 iface eth0 inet6 auto
@@ -118,7 +118,7 @@ otg_mode=1
 
 ### Network configuration
 
-Maunaly set the IP address to `192.168.107.1` using the Network Manager and the nodes to the `hosts` file (`/etc/hosts`):
+Maunaly set the IP address to `192.168.107.107` using the Network Manager and the nodes to the `hosts` file (`/etc/hosts`):
 
 ```
 127.0.0.1    localhost
@@ -135,7 +135,7 @@ ff02::2      ip6-allrouters
 192.168.107.105   neo5
 192.168.107.106   neo6
 
-192.168.107.1 pi
+192.168.107.107 pi
 ```
 
 Enable ip forwarding with `sysctl`:
