@@ -145,18 +145,50 @@ sudo systemctl enable --now systemd-resolved
 sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 ```
 
+### Kubernetes
+
+Enable the `k3s` service if not enabled and edit or create `/etc/rancher/k3s/config.yaml`:
+
+```
+write-kubeconfig-mode: '0644'
+tls-san:
+  - neo1
+  - neo2
+  - neo3
+  - neo4
+  - neo5
+  - neo6
+```
+
 ### SSH Keys
 
 It is nice to have SSH keys to connect from the manager node to the worker nodes. So, create one on the manager node:
 
 ```
 ssh-keygen -t ed25519 -C dietpi@neo1
+cat .ssh/id_ed25519.pub >> .ssh/authorized_keys
 ```
 
 And add it to the worker nodes:
 
 ```
 echo "ssh-ed25519 XXXXXXXXXXXXXXXXXXXXXXXX dietpi@neo1.local" >> /home/dietpi/.ssh/authorized_keys
+```
+
+### Ansible
+
+Edit or create `/etc/ansible/hosts`:
+
+```
+[control]
+neo1
+
+[managed]
+neo2
+neo3
+neo4
+neo5
+neo6
 ```
 
 ### Disable root login
