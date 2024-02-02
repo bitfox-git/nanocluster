@@ -164,6 +164,8 @@ Get the token on neo1:
 
 ```
 sudo cat /var/lib/rancher/k3s/server/node-token
+sudo iptables -A INPUT -p tcp --dport 6443 -j ACCEPT
+sudo netfilter-persistent save
 ```
 
 and use it to add the other nodes to the cluster:
