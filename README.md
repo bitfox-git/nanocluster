@@ -19,6 +19,14 @@ The NanoPI Neo3 cluster is built using the following hardware:
 ![NanoPI Neo3 Cluster - cables side](images/cluster2.jpg)
 ![NanoPI Neo3 Cluster - top](images/cluster3.jpg)
 
+### Router
+
+A random router with username `admin` and password `admin` (if you reset it then it is `1234`). I don't have a licence so the network is `192.168.1.0/24` with the first host as default gateway. Also, disable the wifi network, ssh, ftp and enable ipv6 in expert mode. More in the [documentaion](https://download.zyxel.com/USG60/user_guide/USG60_V4.73_Ed1.pdf).
+
+![NanoPI Neo3 Cluster - top](images/router.png)
+
+> Note: You can see the ip addresses and hostnames in the port forwarding wizzard in Easy Mode.
+
 ## Cluster Software
 ### Operating System
 
@@ -27,7 +35,7 @@ Please, *extract* the image from the archive (.img.gz) with a file manager befor
 
 ### Cluster Network configuration
 
-The hostname of the nodes is `neo` with the host nuber of the ip address in `192.168.107.100/24`. For example `neo1` with `192.168.107.101`. The network configuration files are in the `/etc/network` folder. Please, change the `interfaces` to:
+The hostname of the nodes is `neo` with the host nuber of the ip address in `192.168.1.0/24`. For example `neo1` with `192.168.1.1`. The network configuration files are in the `/etc/network` folder. Please, change the `interfaces` to:
 
 ```
 source interfaces.d/*
@@ -42,14 +50,9 @@ iface lo inet6 loopback
 And create `eth0` in `/etc/network/interfaces.d/`:
 
 ```
-auto eth0
+allow-hotplug eth0
 
-iface eth0 inet static
-  address 192.168.107.101
-  netmask 255.255.255.0
-  gateway 192.168.107.107
-  dns-nameservers 1.1.1.1 8.8.8.8 9.9.9.9
-
+iface eth0 inet dhcp
 iface eth0 inet6 auto
 ```
 
@@ -116,85 +119,32 @@ otg_mode=1
 [all]
 ```
 
-### Network configuration
-
-Maunaly set the IP address to `192.168.107.107` using the Network Manager and the nodes to the `hosts` file (`/etc/hosts`):
-
-```
-127.0.0.1    localhost
-::1          localhost ip6-localhost ip6-loopback
-ff02::1      ip6-allnodes
-ff02::2      ip6-allrouters
-
-127.0.1.1    pi
-
-192.168.107.101   neo1
-192.168.107.102   neo2
-192.168.107.103   neo3
-192.168.107.104   neo4
-192.168.107.105   neo5
-192.168.107.106   neo6
-
-192.168.107.107 pi
-```
-
-Enable ip forwarding with `sysctl`:
-
-```
-sudo sysctl -w net.ipv4.ip_forward=1
-sudo sysctl -w net.ipv6.conf.all.forwarding=1
-```
-
-or create a `/etc/sysctl.d/ipforward.conf` file to make it permanent:
-
-```
-net.ipv4.ip_forward=1
-net.ipv6.conf.all.forwarding=1
-```
-
-Use `ufw` to route/forward through the firewall and reload:
-
-```
-sudo ufw route allow in on eth0 out on wlan0
-sudo ufw default allow routed
-sudo ufw reload
-```
-
-Put this **before the required filter lines** in `/etc/ufw/before.rules` to enable NAT:
-
-```
-# NAT table rules
-*nat
-:POSTROUTING ACCEPT [0:0]
-```
-
-Make sure that the `sudo ufw status verbose` looks like this:
-
-```
-Status: active
-Logging: on (low)
-Default: deny (incoming), allow (outgoing), allow (routed)
-New profiles: skip
-
-To                         Action      From
---                         ------      ----
-Anywhere on wlan0          ALLOW FWD   Anywhere on eth0          
-Anywhere (v6) on wlan0     ALLOW FWD   Anywhere (v6) on eth0
-```
-
-If routing is enabled then login with `ssh root@192.168.107.101` and the `dietpi` password. 
-
 ## DietPi Setup
 
-`DietPi-Update` will be executed when logging in for the first time. Use it to install the official DietPI dashboard on the first node. This will be our main node and Kubernetes controller. Also, install docker, k3s and a ssh client. The other nodes need only the DietPi dashboard API (and docker & k3s).
+Login with `ssh root@<IP address from dhcp server>` and the `dietpi` password.
 
-### DietPi Dashboard
+`DietPi-Update` will be executed when logging in for the first time. After that install:
 
-Change the terminal user for DietPi Dashboard configuration to `dietpi` and add the nodes:
+- docker
+- k3s
+- ansible
+- avahi-daemon
+- avahi-utils
+- systemd-resolved
+- a ssh client like dropbear or openssh
+
+The first node will be our Kubernetes and Ansible controller. So install `ansible-core` and `iptables-persistent` on the first node.
+
+### Hostname discovery with Avahi and resolved
+
+Enable Avahi and resolved if not enabled to allow hostname discovery on all nodes:
 
 ```
-terminal_user = "dietpi"
-nodes = ["neo2:5252", "neo3:5252", "neo4:5252", "neo5:5252", "neo6:5252"]
+sudo iptables -A INPUT -p udp --dport 5353 -j ACCEPT
+sudo netfilter-persistent save
+sudo sed -i '/^#MulticastDNS=yes/s/^#//' /etc/systemd/resolved.conf
+sudo systemctl enable --now systemd-resolved
+sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 ```
 
 ### SSH Keys
