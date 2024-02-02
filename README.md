@@ -160,6 +160,19 @@ sudo ufw default allow routed
 sudo ufw reload
 ```
 
+Put this **before the required filter lines** in `/etc/ufw/before.rules` to enable NAT:
+
+```
+# NAT table rules
+*nat
+:POSTROUTING ACCEPT [0:0]
+```
+
+And add the route manually: 
+```
+sudo route add -net 192.168.113.0 netmask 255.255.255.0 gw 192.168.107.107
+```
+
 Make sure that the `sudo ufw status verbose` looks like this:
 
 ```
@@ -174,15 +187,7 @@ Anywhere on wlan0          ALLOW FWD   Anywhere on eth0
 Anywhere (v6) on wlan0     ALLOW FWD   Anywhere (v6) on eth0
 ```
 
-Put this **before the required filter lines** in `/etc/ufw/before.rules` to enable NAT:
-
-```
-# NAT table rules
-*nat
-:POSTROUTING ACCEPT [0:0]
-```
-
-If routing and NAT are enabled then login with `ssh root@192.168.107.101` and the `dietpi` password. 
+If routing is enabled then login with `ssh root@192.168.107.101` and the `dietpi` password. 
 
 ## DietPi Setup
 
