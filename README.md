@@ -168,11 +168,6 @@ Put this **before the required filter lines** in `/etc/ufw/before.rules` to enab
 :POSTROUTING ACCEPT [0:0]
 ```
 
-And add the route manually: 
-```
-sudo route add -net 192.168.113.0 netmask 255.255.255.0 gw 192.168.107.107
-```
-
 Make sure that the `sudo ufw status verbose` looks like this:
 
 ```
