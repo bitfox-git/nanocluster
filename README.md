@@ -124,14 +124,13 @@ Login with `ssh root@<IP address from dhcp server>` and the `dietpi` password.
 `DietPi-Update` will be executed when logging in for the first time. After that install:
 
 - docker
-- k3s
 - ansible
 - avahi-daemon
-- avahi-utils
+- iptables-persistent
 - systemd-resolved
 - a ssh client like dropbear or openssh
 
-The first node will be our Kubernetes and Ansible controller. So install `ansible-core` and `iptables-persistent` on the first node.
+The first node will be our Kubernetes and Ansible controller. So install `ansible-core` and `k3s` on the first node.
 
 ### Hostname discovery with Avahi and resolved
 
@@ -147,6 +146,31 @@ sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
 ### Kubernetes
 
+#### neo1
+
+```
+# Kubernetes API server
+sudo iptables -A INPUT -p tcp --dport 6443 -j ACCEPT
+
+# etcd server client API
+sudo iptables -A INPUT -p tcp --dport 2379:2380 -j ACCEPT
+
+# Flannel VXLAN (if using Flannel)
+sudo iptables -A INPUT -p udp --dport 8472 -j ACCEPT
+
+# kubelet
+sudo iptables -A INPUT -p tcp --dport 10250 -j ACCEPT
+
+# kube-scheduler
+sudo iptables -A INPUT -p tcp --dport 10251 -j ACCEPT
+
+# kube-controller-manager
+sudo iptables -A INPUT -p tcp --dport 10252 -j ACCEPT
+
+# NodePort Services range
+sudo iptables -A INPUT -p tcp --dport 30000:32767 -j ACCEPT
+```
+
 Enable the `k3s` service if not enabled and edit or create `/etc/rancher/k3s/config.yaml`:
 
 ```
@@ -158,6 +182,16 @@ tls-san:
   - neo4
   - neo5
   - neo6
+```
+
+#### other nodes
+
+```
+# Allow outbound connections to the k3s server
+sudo iptables -A OUTPUT -p tcp --dport 6443 -j ACCEPT
+sudo iptables -A OUTPUT -p tcp --dport 2379:2380 -j ACCEPT # If your agents need to directly communicate with etcd
+sudo iptables -A OUTPUT -p udp --dport 8472 -j ACCEPT # If using Flannel VXLAN
+sudo iptables -A OUTPUT -p tcp --dport 10250 -j ACCEPT # kubelet -> kubelet
 ```
 
 Get the token on neo1:
