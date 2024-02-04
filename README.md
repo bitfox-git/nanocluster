@@ -169,6 +169,10 @@ sudo iptables -A INPUT -p tcp --dport 10252 -j ACCEPT
 
 # NodePort Services range
 sudo iptables -A INPUT -p tcp --dport 30000:32767 -j ACCEPT
+
+# Save the rules
+sudo netfilter-persistent save
+sudo netfilter-persistent reload
 ```
 
 Enable the `k3s` service if not enabled and edit or create `/etc/rancher/k3s/config.yaml`:
@@ -192,14 +196,16 @@ sudo iptables -A OUTPUT -p tcp --dport 6443 -j ACCEPT
 sudo iptables -A OUTPUT -p tcp --dport 2379:2380 -j ACCEPT # If your agents need to directly communicate with etcd
 sudo iptables -A OUTPUT -p udp --dport 8472 -j ACCEPT # If using Flannel VXLAN
 sudo iptables -A OUTPUT -p tcp --dport 10250 -j ACCEPT # kubelet -> kubelet
+
+# Save the rules
+sudo netfilter-persistent save
+sudo netfilter-persistent reload
 ```
 
 Get the token on neo1:
 
 ```
 sudo cat /var/lib/rancher/k3s/server/node-token
-sudo iptables -A INPUT -p tcp --dport 6443 -j ACCEPT
-sudo netfilter-persistent save
 ```
 
 and use it to add the other nodes to the cluster:
