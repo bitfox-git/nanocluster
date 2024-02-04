@@ -30,7 +30,7 @@ A random router with username `admin` and password `admin` (if you reset it then
 ## Cluster Software
 ### Operating System
 
-The nodes uses the [official debian bookworm image](https://drive.google.com/file/d/1WMHuiTW-hMY0nQESvpRpt88eRmXapAcX/view) from the Google Drive link in the [wiki](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_NEO3#Downloads).
+The nodes uses the [official debian bookworm image](https://drive.google.com/file/d/1WMHuiTW-hMY0nQESvpRpt88eRmXapAcX/view) from the [wiki](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_NEO3#Downloads).
 Please, *extract* the image from the archive (.img.gz) with a file manager before *restoring* it with [Gnome Disks](https://apps.gnome.org/en-GB/DiskUtility/) to the SD cards.
 
 ### Cluster Network configuration
