@@ -192,13 +192,13 @@ tls-san:
 
 ```
 # Allow outbound connections to the k3s server
-sudo iptables -A OUTPUT -p tcp --dport 6443 -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --dport 2379:2380 -j ACCEPT # If your agents need to directly communicate with etcd
-sudo iptables -A OUTPUT -p udp --dport 8472 -j ACCEPT # If using Flannel VXLAN
-sudo iptables -A OUTPUT -p tcp --dport 10250 -j ACCEPT # kubelet -> kubelet
+sudo iptables -A OUTPUT -p tcp --dport 6443 -j ACCEPT && \
+sudo iptables -A OUTPUT -p tcp --dport 2379:2380 -j ACCEPT && \
+sudo iptables -A OUTPUT -p udp --dport 8472 -j ACCEPT && 
+sudo iptables -A OUTPUT -p tcp --dport 10250 -j ACCEPT
 
 # Save the rules
-sudo netfilter-persistent save
+sudo netfilter-persistent save && \
 sudo netfilter-persistent reload
 ```
 
