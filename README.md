@@ -125,13 +125,16 @@ Login with `ssh root@<IP address from dhcp server>` and the `dietpi` password.
 
 - ansible
 - avahi-daemon
-- docker
 - dropbear (or openssh)
 - iptables-persistent
 - libnss-mdns
 - systemd-resolved
 
-The first node will be our Kubernetes and Ansible controller. So install `ansible-core` and `k3s` on the first node.
+The first node will be our Kubernetes and Ansible controller. So install `ansible-core` and Kubernetes on the first node:
+
+```
+curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -s --cluster-cidr=10.42.0.0/16,2001:cafe:42::/56 --service-cidr=10.43.0.0/16,2001:cafe:43::/112
+```
 
 ### Hostname discovery with Avahi and resolved
 
@@ -212,7 +215,7 @@ sudo cat /var/lib/rancher/k3s/server/node-token
 and use it to add the other nodes to the cluster:
 
 ```
-curl -sfL https://get.k3s.io | K3S_URL=https://neo1.local:6443 K3S_TOKEN=<token> sh -
+curl -sfL https://get.k3s.io | K3S_URL=https://neo1.local:6443 K3S_TOKEN=<token> K3S_NODE_NAME="neo2" sh -
 ```
 
 Verify the nodes on neo1:
