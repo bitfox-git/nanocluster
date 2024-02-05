@@ -181,12 +181,12 @@ Enable the `k3s` service if not enabled and edit or create `/etc/rancher/k3s/con
 ```
 write-kubeconfig-mode: '0644'
 tls-san:
-  - neo1
-  - neo2
-  - neo3
-  - neo4
-  - neo5
-  - neo6
+  - neo1.local
+  - neo2.local
+  - neo3.local
+  - neo4.local
+  - neo5.local
+  - neo6.local
 ```
 
 #### other nodes
@@ -242,14 +242,14 @@ Edit or create `/etc/ansible/hosts`:
 
 ```
 [control]
-neo1
+neo1.local
 
 [managed]
-neo2
-neo3
-neo4
-neo5
-neo6
+neo2.local
+neo3.local
+neo4.local
+neo5.local
+neo6.local
 ```
 
 ### Disable root login
