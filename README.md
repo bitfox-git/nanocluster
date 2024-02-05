@@ -123,12 +123,13 @@ Login with `ssh root@<IP address from dhcp server>` and the `dietpi` password.
 
 `DietPi-Update` will be executed when logging in for the first time. After that install:
 
-- docker
 - ansible
 - avahi-daemon
+- docker
+- dropbear (or openssh)
 - iptables-persistent
+- libnss-mdns
 - systemd-resolved
-- a ssh client like dropbear or openssh
 
 The first node will be our Kubernetes and Ansible controller. So install `ansible-core` and `k3s` on the first node.
 
