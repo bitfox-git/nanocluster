@@ -171,7 +171,7 @@ sudo iptables -A INPUT -p tcp --dport 10252 -j ACCEPT
 sudo iptables -A INPUT -p tcp --dport 30000:32767 -j ACCEPT
 
 # Save the rules
-sudo netfilter-persistent save
+sudo netfilter-persistent save && \
 sudo netfilter-persistent reload
 ```
 
