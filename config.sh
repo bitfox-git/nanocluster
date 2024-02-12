@@ -36,3 +36,11 @@ ff02::2    ip6-allrouters
 
 127.0.1.1  neo${1}.local
 " > etc/hosts
+
+for I in {1..${2:-6}}
+do
+  if [ "$I" -ne "${1}" ]
+  then
+    echo "192.168.107.10$I   neo$I" >> etc/hosts
+  fi
+done
