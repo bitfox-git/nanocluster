@@ -39,13 +39,13 @@ auto lo
 iface lo inet6 loopback
 ```
 
-And create `eth0` in `/etc/network/interfaces.d/`:
+And create `eth0` in `/etc/network/interfaces.d/` and replace X with the host number:
 
 ```
 auto eth0
 
 iface eth0 inet static
-  address 192.168.107.101
+  address 192.168.107.10X
   netmask 255.255.255.0
   gateway 192.168.107.1
   dns-nameservers 192.168.107.1

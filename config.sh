@@ -1,42 +1,21 @@
 #!/bin/sh
-
+echo neo${1} > /media/$USER/rootfs/etc/hostname
+sed -i "s/FriendlyElec/neo${1}/g" /media/$USER/rootfs/etc/hosts 
 echo "auto eth0
 
 iface eth0 inet static
-  address 192.168.107.101
+  address 192.168.107.10${1}
   netmask 255.255.255.0
   gateway 192.168.107.1
   dns-nameservers 192.168.107.1
+iface eth0 inet6 auto" > /media/$USER/rootfs/etc/network/interfaces.d/eth0
 
-iface eth0 inet6 auto
-" > etc/network/interfaces.d/eth0
+mkdir /media/$USER/rootfs/root/.ssh
+cp /home/$USER/.ssh/id_ed25519.pub /media/$USER/rootfs/root/.ssh/authorized_keys
+chmod 644 /media/$USER/rootfs/root/.ssh/authorized_keys
+chmod 700 /media/$USER/rootfs/root/.ssh
 
-echo "# Location: /etc/network/interfaces
-# Please modify network settings via: dietpi-config
-# Or create your own drop-ins in: /etc/network/interfaces.d/
-
-# Drop-in configs
-source interfaces.d/*
-
-auto lo
-iface lo inet loopback
-
-auto lo
-iface lo inet6 loopback
-" > etc/network/interfaces
-
-echo "neo${1}
-" > etc/hostname
-
-echo "
-127.0.0.1  neo${1} neo${1}.local localhost ip4-localhost
-::1        neo${1} neo${1}.local localhost ip6-localhost
-" > etc/hosts
-
-for I in {1..${2:-6}}
-do
-  if [ "$I" -ne "${1}" ]
-  then
-    echo "192.168.107.10$I   neo$I" >> etc/hosts
-  fi
-done
+mkdir /media/$USER/rootfs/home/pi/.ssh
+cp /home/$USER/.ssh/id_ed25519.pub /media/$USER/rootfs/home/pi/.ssh/authorized_keys
+chmod 644 /media/$USER/rootfs/home/pi/.ssh/authorized_keys
+chmod 700 /media/$USER/rootfs/home/pi/.ssh
