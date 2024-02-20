@@ -55,65 +55,6 @@ iface eth0 inet6 auto
 
 > It is also posseble to use the [config script](./config.sh) like this: `sh ~/nanocluster/config.sh 1`.
 
-## Workstacion (optional)
-
-I use a Raspbery Pi 5 as a development workstacion. It runs on [Alpine Linux](https://wiki.alpinelinux.org/wiki/Raspberry_Pi) with the Gnome desktop. Gnome uses Network Manager. So, remove `/etc/network/interfaces` so that Network Manager may manage the network interfaces. Otherwise the desktop things that you have no internet connection.
-
-By default Alpine Linux has no Raspbery Pi configuration file. So, I copyied the default `config.txt` from the official Raspbery Pi OS and renamed it to `usercfg.txt`. Compair it with the default `config.txt` from Alpine Linux and remove dubble stuff from `usercfg.txt`. So that is looks like this:
-
-```
-# For more options and information see
-# http://rptl.io/configtxt
-# Some settings may impact device functionality. See link above for details
-
-# uncomment if you get no picture on HDMI for a default "safe" mode
-hdmi_safe=1
-
-# PI 5
-BOOT_UART=1
-POWER_OFF_ON_HALT=1
-BOOT_ORDER=0xf416
-
-# Uncomment some or all of these to enable the optional hardware interfaces
-#dtparam=i2c_arm=on
-#dtparam=i2s=on
-#dtparam=spi=on
-
-# Enable audio (loads snd_bcm2835)
-dtparam=audio=on
-
-# Additional overlays and parameters are documented
-# /boot/firmware/overlays/README
-
-# Automatically load overlays for detected cameras
-#camera_auto_detect=1
-
-# Automatically load overlays for detected DSI displays
-display_auto_detect=1
-
-# Enable DRM VC4 V3D driver
-dtoverlay=vc4-kms-v3d
-max_framebuffers=2
-
-# Don't have the firmware create an initial video= setting in cmdline.txt.
-# Use the kernel's default instead.
-disable_fw_kms_setup=1
-
-# Disable compensation for displays with overscan
-disable_overscan=1
-
-# Run as fast as firmware / board allows
-arm_boost=1
-
-[cm4]
-# Enable host mode on the 2711 built-in XHCI USB controller.
-# This line should be removed if the legacy DWC2 controller is required
-# (e.g. for USB device mode) or if USB support is not required.
-otg_mode=1
-
-[all]
-```
-
 ## DietPi Setup
 
 Login with `ssh root@<IP address from dhcp server>` and the `dietpi` password.
