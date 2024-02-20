@@ -19,14 +19,6 @@ The NanoPI Neo3 cluster is built using the following hardware:
 ![NanoPI Neo3 Cluster - cables side](images/cluster2.jpg)
 ![NanoPI Neo3 Cluster - top](images/cluster3.jpg)
 
-### Router
-
-A random router with username `admin` and password `admin` (if you reset it then it is `1234`). I don't have a licence so the network is `192.168.1.0/24` with the first host as default gateway. Also, disable the wifi network, ssh, ftp and enable ipv6 in expert mode. More in the [documentaion](https://download.zyxel.com/USG60/user_guide/USG60_V4.73_Ed1.pdf).
-
-![NanoPI Neo3 Cluster - top](images/router.png)
-
-> Note: You can see the ip addresses and hostnames in the port forwarding wizzard in Easy Mode.
-
 ## Cluster Software
 ### Operating System
 
