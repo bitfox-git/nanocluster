@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "allow-hotplug eth0
+echo "auto eth0
 
 iface eth0 inet static
   address 192.168.107.101
@@ -29,12 +29,8 @@ echo "neo${1}
 " > etc/hostname
 
 echo "
-127.0.0.1  neo${1} localhost
-::1        localhost ip6-localhost ip6-loopback
-ff02::1    ip6-allnodes
-ff02::2    ip6-allrouters
-
-127.0.1.1  neo${1}.local
+127.0.0.1  neo${1} neo${1}.local localhost ip4-localhost
+::1        neo${1} neo${1}.local localhost ip6-localhost
 " > etc/hosts
 
 for I in {1..${2:-6}}
