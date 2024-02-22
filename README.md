@@ -143,7 +143,7 @@ Create the playbook for installing Kubernetes:
         shell: /usr/sbin/nologin
 ```
 
-And run it with:
+Ansible requires python so use [this script](py.sh) to install it before running:
 
 ```sh
 ansible-playbook -i /etc/ansible/hosts /etc/ansible/playbooks/nodes.yaml
