@@ -118,6 +118,11 @@ Then install Kubernetes using Ansible policies:
     - name: Wait for MicroK8s to be ready
       command: microk8s status --wait-ready
       become_user: "{{ ansible_user }}"
+
+    - name: Disable root login by changing shell
+      user:
+        name: root
+        shell: /usr/sbin/nologin
 ```
 
 <!-- Verify the nodes on neo1:
@@ -125,7 +130,3 @@ Then install Kubernetes using Ansible policies:
 ```sh
 kubectl get nodes
 ``` -->
-
-### Disable root login
-
-Edit the `/etc/passwd` file and change the shell from `/bin/bash` to `/usr/sbin/nologin` for the root user on every node.
