@@ -22,7 +22,7 @@ The NanoPI Neo3 cluster is built using the following hardware:
 ## Cluster Software
 ### Operating System
 
-The nodes uses the [official debian bookworm image](https://drive.google.com/file/d/1WMHuiTW-hMY0nQESvpRpt88eRmXapAcX/view) from the [wiki](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_NEO3#Downloads).
+The nodes uses a [dietpi image](https://dietpi.com/#download) for the `NanoPi NEO3`.
 Please, *extract* the image from the archive (.img.gz) with a file manager before *restoring* it with [Gnome Disks](https://apps.gnome.org/en-GB/DiskUtility/) to the SD cards.
 
 ### Cluster Network configuration
@@ -61,18 +61,12 @@ Login with `ssh root@<IP address from dhcp server>` and the `dietpi` password.
 
 `DietPi-Update` will be executed when logging in for the first time. After that install:
 
-- ansible
-- avahi-daemon
-- dropbear (or openssh)
-- iptables-persistent
-- libnss-mdns
+- dropbear (or openssh) for ansible
+- 
 - systemd-resolved
 
-The first node will be our Kubernetes and Ansible controller. So install `ansible-core` and Kubernetes on the first node:
+The first node will be our Ansible controller. So install `ansible-core` and Kubernetes on the first node:
 
-```
-curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -s --cluster-cidr=10.42.0.0/16,2001:cafe:42::/56 --service-cidr=10.43.0.0/16,2001:cafe:43::/112
-```
 
 ### Hostname discovery with Avahi and resolved
 
