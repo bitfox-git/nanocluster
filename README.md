@@ -23,68 +23,51 @@ The NanoPI Neo3 cluster is built using the following hardware:
 ### Operating System
 
 The nodes uses a [dietpi image](https://dietpi.com/#download) for the `NanoPi NEO3`.
-Please, *extract* the image from the archive (.img.gz) with a file manager before *restoring* it with [Gnome Disks](https://apps.gnome.org/en-GB/DiskUtility/) to the SD cards.
+Please, *extract* the image from the archive (.img.gz) with a file manager before *restoring* it with [Gnome Disks](https://apps.gnome.org/en-GB/DiskUtility/) to the SD cards. After that, mount the DIETPISETUP partition manually to make sure to have write access to the volume.
 
-### Cluster Network configuration
-
-The hostname of the nodes is `neo` with the host nuber of the ip address in `192.168.1.0/24`. For example `neo1` with `192.168.1.1`. The network configuration files are in the `/etc/network` folder. Please, change the `interfaces` to:
-
-```
-source interfaces.d/*
-
-auto lo
-iface lo inet loopback
-
-auto lo
-iface lo inet6 loopback
+```sh
+sudo mount /dev/sda2 /mnt
+ls -lha /mnt
 ```
 
-And create `eth0` in `/etc/network/interfaces.d/` and replace X with the host number:
+The resolt should be:
 
 ```
-auto eth0
-
-iface eth0 inet static
-  address 192.168.107.10X
-  netmask 255.255.255.0
-  gateway 192.168.107.1
-  dns-nameservers 192.168.107.1
-
-iface eth0 inet6 auto
+total 46K
+drwxr-xr-x  2 root root  16K Jan  1  1970 .
+drwxr-xr-x 18 root root 4.0K Feb 12 14:21 ..
+-rwxr-xr-x  1 root root  336 Feb 20 01:27 dietpiEnv.txt
+-rwxr-xr-x  1 root root  18K Feb 20 01:27 dietpi.txt
+-rwxr-xr-x  1 root root 3.9K Feb 20 01:27 dietpi-wifi.txt
+-rwxr-xr-x  1 root root  440 Feb 20 01:27 Readme-DietPi-Config.txt
 ```
 
-> It is also posseble to use the [config script](./config.sh) like this: `sh ~/nanocluster/config.sh 1`.
+Then use the [script](sed.sh) to replace the default values. In this case the Micro SD card is used for the firts node:
 
-## DietPi Setup
+```sh
+sudo ./dietpi 1
+``` 
 
-Login with `ssh root@<IP address from dhcp server>` and the `dietpi` password.
+The [script](sed.sh) changed the hostname of the nodes to `neo` with a host nuber from the first argument of the [script](sed.sh). So `./dietpi 1` changes it to `neo1`. It also sets a static ip address for the `192.168.1.0/24` network. In this case it became `192.168.1.101`. More information is in the network configuration folder: `/mnt/etc/network`.
 
-`DietPi-Update` will be executed when logging in for the first time. After that install:
+> [!TIP]
+> Generate a ssh key pair bevore using the [script](sed.sh). It will copy the id_ed25519 public key from the users home dirictory.
+> 
+> ```sh
+> ssh-keygen -t ed25519 -C "ansible@host.local"
+> ```
 
-- dropbear (or openssh) for ansible
-- 
-- systemd-resolved
+Umount `/mnt` and repeat for the other nodes:
 
-The first node will be our Ansible controller. So install `ansible-core` and Kubernetes on the first node:
-
-
-### Hostname discovery with Avahi and resolved
-
-Enable Avahi and resolved if not enabled to allow hostname discovery on all nodes:
-
-```
-sudo iptables -A INPUT -p udp --dport 5353 -j ACCEPT
-sudo netfilter-persistent save
-sudo sed -i '/^#MulticastDNS=yes/s/^#//' /etc/systemd/resolved.conf
-sudo systemctl enable --now systemd-resolved
-sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+```sh
+sudo umount /mnt
 ```
 
 ### Kubernetes
 
 #### neo1
 
-```
+```sh
 # Kubernetes API server
 sudo iptables -A INPUT -p tcp --dport 6443 -j ACCEPT
 
@@ -113,7 +96,7 @@ sudo netfilter-persistent reload
 
 Enable the `k3s` service if not enabled and edit or create `/etc/rancher/k3s/config.yaml`:
 
-```
+```yaml
 write-kubeconfig-mode: '0644'
 tls-san:
   - neo1.local
@@ -126,7 +109,7 @@ tls-san:
 
 #### other nodes
 
-```
+```sh
 # Allow outbound connections to the k3s server
 sudo iptables -A OUTPUT -p tcp --dport 6443 -j ACCEPT && \
 sudo iptables -A OUTPUT -p tcp --dport 2379:2380 -j ACCEPT && \
@@ -140,19 +123,19 @@ sudo netfilter-persistent reload
 
 Get the token on neo1:
 
-```
+```sh
 sudo cat /var/lib/rancher/k3s/server/node-token
 ```
 
 and use it to add the other nodes to the cluster:
 
-```
+```sh
 curl -sfL https://get.k3s.io | K3S_URL=https://neo1.local:6443 K3S_TOKEN=<token> K3S_NODE_NAME="neo2" sh -
 ```
 
 Verify the nodes on neo1:
 
-```
+```sh
 kubectl get nodes
 ```
 
@@ -160,14 +143,14 @@ kubectl get nodes
 
 It is nice to have SSH keys to connect from the manager node to the worker nodes. So, create one on the manager node:
 
-```
+```sh
 ssh-keygen -t ed25519 -C dietpi@neo1
 cat .ssh/id_ed25519.pub >> .ssh/authorized_keys
 ```
 
 And add it to the worker nodes:
 
-```
+```sh
 echo "ssh-ed25519 XXXXXXXXXXXXXXXXXXXXXXXX dietpi@neo1.local" >> /home/dietpi/.ssh/authorized_keys
 ```
 
