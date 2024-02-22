@@ -1,6 +1,12 @@
 # Setup workstation
 
-I use a Raspbery Pi 5 as with the [official Raspberry Pi OS](https://www.raspberrypi.com/software) as workstation. If it is not preinstalled or installed automaticly on the Micro SD card then use the Raspberry Pi Imager to install it.
+I use a Raspbery Pi 5 as with the [official Raspberry Pi OS](https://www.raspberrypi.com/software) as workstation. If it is not preinstalled or installed automaticly on the Micro SD card then use the Raspberry Pi Imager to install it. I changed the power settings in my [configuration](config.txt):
+
+```
+BOOT_UART=1
+POWER_OFF_ON_HALT=1
+BOOT_ORDER=0xf416
+```
 
 After that, boot into Raspberry Pi OS and install the folowing software:
 
