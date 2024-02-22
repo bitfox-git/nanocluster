@@ -31,4 +31,19 @@ flatpak install flathub com.github.marhkb.Pods
 xdg-mime default pcmanfm.desktop inode/directory
 ```
 
+### Remove the password prompt
 
+create `/etc/polkit-1/rules.d/49-nopasswd_global.rules` with:
+
+```
+/* Allow members of the wheel group to execute any actions
+ * without password authentication, similar to "sudo NOPASSWD:"
+ */
+polkit.addRule(function(action, subject) {
+    if (subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+    }
+});
+```
+
+and reboot.
