@@ -76,6 +76,7 @@ Install `ansible-core` on the workstation and configure it.
 /etc/ansible/ansible.cfg
 ---
 [defaults]
+host_key_checking = False
 playbooks = /etc/ansible/playbooks
 ```
 
