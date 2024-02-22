@@ -99,6 +99,7 @@ Create the playbook for installing Kubernetes:
 ---
 - name: Install MicroK8s on DietPi/Debian nodes
   hosts: nodes
+  remote_user: dietpi
   become: yes
   tasks:
     - name: Update apt cache
