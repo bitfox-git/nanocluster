@@ -104,7 +104,7 @@ Create the playbook for installing Kubernetes:
   become: yes
   tasks:
     - name: Update DietPi
-      command: dietpi-update
+      command: /boot/dietpi/dietpi-update
 
     - name: Update apt cache
       apt:
