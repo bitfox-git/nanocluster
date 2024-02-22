@@ -68,7 +68,7 @@ sudo umount /mnt
 
 ### Install Kubernetes
 
-Install `Ansible` on the workstation and create or edit `/etc/ansible/hosts` to:
+Install `ansible-core` on the workstation and create or edit `/etc/ansible/hosts` to:
 
 ```
 [nodes]
@@ -82,15 +82,49 @@ Install `Ansible` on the workstation and create or edit `/etc/ansible/hosts` to:
 
 Then install Kubernetes using Ansible policies:
 
-```sh
-# todo
+```yaml
+---
+- name: Install MicroK8s on DietPi/Debian nodes
+  hosts: nodes
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      changed_when: false
+
+    - name: Install snapd with apt
+      apt:
+        name: snapd
+        state: present
+
+    - name: Ensure snapd service is running
+      service:
+        name: snapd
+        state: started
+        enabled: yes
+
+    - name: Install MicroK8s
+      command: snap install microk8s --classic
+      args:
+        creates: /snap/bin/microk8s
+
+    - name: Add the current user to the microk8s group
+      user:
+        name: "{{ ansible_user }}"
+        groups: microk8s
+        append: yes
+
+    - name: Wait for MicroK8s to be ready
+      command: microk8s status --wait-ready
+      become_user: "{{ ansible_user }}"
 ```
 
-Verify the nodes on neo1:
+<!-- Verify the nodes on neo1:
 
 ```sh
 kubectl get nodes
-```
+``` -->
 
 ### Disable root login
 
