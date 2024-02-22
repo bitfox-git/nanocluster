@@ -80,7 +80,7 @@ Install `ansible-core` on the workstation and create or edit `/etc/ansible/hosts
 192.168.107.106
 ```
 
-Then install Kubernetes using Ansible policies:
+create a ansible playbook for installing Kubernetes on the nodes:
 
 ```yaml
 ---
@@ -123,6 +123,12 @@ Then install Kubernetes using Ansible policies:
       user:
         name: root
         shell: /usr/sbin/nologin
+```
+
+And run it with:
+
+```sh
+ansible-playbook -i /etc/ansible/hosts nodes.yml
 ```
 
 <!-- Verify the nodes on neo1:
