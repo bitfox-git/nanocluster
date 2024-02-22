@@ -101,6 +101,7 @@ Create the playbook for installing Kubernetes:
   hosts: nodes
   remote_user: dietpi
   become: yes
+  scp_if_ssh: true
   tasks:
     - name: Update DietPi
       command: dietpi-update
