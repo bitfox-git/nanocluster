@@ -64,7 +64,7 @@ sudo umount /mnt
 ```
 
 > [!TIP]
-> Validate installation with `ssh dietpi@192.168.107.101`.
+> Validate with `ssh dietpi@192.168.107.101`.
 
 ### Install Kubernetes
 
