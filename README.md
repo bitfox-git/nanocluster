@@ -51,11 +51,7 @@ sudo ./dietpi 1
 The [script](sed.sh) changed the hostname of the nodes to `neo` with a host nuber from the first argument of the [script](sed.sh). So `./dietpi 1` changes it to `neo1`. It also sets a static ip address for the `192.168.1.0/24` network. In this case it became `192.168.1.101`. More information is in the network configuration folder: `/mnt/etc/network`.
 
 > [!TIP]
-> Generate a ssh key pair bevore using the [script](sed.sh). It will copy the id_ed25519 public key from the users home dirictory.
-> 
-> ```sh
-> ssh-keygen -t ed25519 -C "ansible@host.local"
-> ```
+> Generate a ssh key pair bevore using the [script](sed.sh). It will copy the ed25519 public key from the users home dirictory.
 
 Umount `/mnt` and repeat for the other nodes:
 
@@ -68,9 +64,26 @@ sudo umount /mnt
 
 ### Install Kubernetes
 
-Install `ansible-core` on the workstation and create or edit `/etc/ansible/hosts` to:
+Make sure the `/etc/ansible/playbooks` folders exists:
+
+```sh
+sudo mkdir -p /etc/ansible/playbooks
+```
+
+Install `ansible-core` on the workstation and configure it.
 
 ```
+/etc/ansible/ansible.cfg
+---
+[defaults]
+playbooks = /etc/ansible/playbooks
+```
+
+Add the managed hosts
+
+```
+/etc/ansible/hosts
+---
 [nodes]
 192.168.107.101
 192.168.107.102
@@ -80,7 +93,7 @@ Install `ansible-core` on the workstation and create or edit `/etc/ansible/hosts
 192.168.107.106
 ```
 
-create a ansible playbook for installing Kubernetes on the nodes:
+Create the playbook for installing Kubernetes: 
 
 ```yaml
 ---
@@ -128,7 +141,7 @@ create a ansible playbook for installing Kubernetes on the nodes:
 And run it with:
 
 ```sh
-ansible-playbook -i /etc/ansible/hosts nodes.yml
+ansible-playbook -i /etc/ansible/hosts /etc/ansible/playbooks/nodes.yaml
 ```
 
 <!-- Verify the nodes on neo1:
