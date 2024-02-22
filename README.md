@@ -63,6 +63,9 @@ Umount `/mnt` and repeat for the other nodes:
 sudo umount /mnt
 ```
 
+> [!TIP]
+> Validate the installation with `ssh dietpi@192.168.107.101`.
+
 ### Install Kubernetes
 
 Install `Ansible` on the workstation and create or edit `/etc/ansible/hosts` to:
