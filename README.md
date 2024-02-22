@@ -25,7 +25,7 @@ The NanoPI Neo3 cluster is built using the following hardware:
 The nodes uses a [dietpi image](https://dietpi.com/#download) for the `NanoPi NEO3`.
 Please, *extract* the image from the archive (.img.gz) with a file manager before *restoring* it with [Gnome Disks](https://apps.gnome.org/en-GB/DiskUtility/) to the SD cards. After that, mount the DIETPISETUP partition manually to make sure to have write access to the volume.
 
-```bash
+```sh
 sudo mount /dev/sda2 /mnt
 ls -lha /mnt
 ```
@@ -44,23 +44,22 @@ drwxr-xr-x 18 root root 4.0K Feb 12 14:21 ..
 
 Then use the [script](sed.sh) to replace the default values. In this case the Micro SD card is used for the firts node:
 
-```bash
+```sh
 sudo ./dietpi 1
 ``` 
 
 The [script](sed.sh) changed the hostname of the nodes to `neo` with a host nuber from the first argument of the [script](sed.sh). So `./dietpi 1` changes it to `neo1`. It also sets a static ip address for the `192.168.1.0/24` network. In this case it became `192.168.1.101`. More information is in the network configuration folder: `/mnt/etc/network`.
 
 > [!TIP]
-> 
 > Generate a ssh key pair bevore using the [script](sed.sh). It will copy the id_ed25519 public key from the users home dirictory.
 > 
-> ```bash
+> ```sh
 > ssh-keygen -t ed25519 -C "ansible@host.local"
 > ```
 
 Umount `/mnt` and repeat for the other nodes:
 
-```bash
+```sh
 sudo umount /mnt
 ```
 
@@ -86,7 +85,7 @@ Then install Kubernetes using Ansible policies:
 
 Verify the nodes on neo1:
 
-```bash
+```sh
 kubectl get nodes
 ```
 
