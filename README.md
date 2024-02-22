@@ -102,6 +102,9 @@ Create the playbook for installing Kubernetes:
   remote_user: dietpi
   become: yes
   tasks:
+    - name: Update DietPi
+      command: dietpi-update
+
     - name: Update apt cache
       apt:
         update_cache: yes
