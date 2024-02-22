@@ -8,7 +8,7 @@ end=106
 # Loop through the range and run the SSH command in the background
 for i in $(seq $start $end); do
   ip="${prefix}${i}"
-  ssh -o StrictHostKeyChecking=no $ip "sudo apt update && sudo apt install -y python3" &
+  ssh -o StrictHostKeyChecking=no dietpi@$ip "sudo apt update && sudo apt install -y python3" &
 done
 
 # Wait for all background processes to finish
