@@ -56,11 +56,16 @@
 
       - name: Set join command as fact
         set_fact:
-          microk8s_join_command: "{{ join_command_result.stdout_lines[2] }}"
+          microk8s_join_command: "{{ join_command_result.stdout_lines[1] }}"
         when: join_command_result is defined
 
       delegate_to: "{{ groups['controllers'][0] }}"
       run_once: true
+
+    - name: Debug print join command
+      debug:
+        msg: "Join command to be executed: {{ hostvars[groups['controllers'][0]].microk8s_join_command }}"
+      when: not inventory_hostname in groups['controllers']
 
     - name: Join worker nodes to the MicroK8s cluster
       command: "{{ hostvars[groups['controllers'][0]].microk8s_join_command }}"
