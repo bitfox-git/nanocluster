@@ -56,22 +56,16 @@ spec:
   selector:
     app: kuma
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: v1
+kind: Service
 metadata:
-  name: kuma-ingress
+  name: kuma-node
   namespace: kuma
-  annotations:
-    nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
-  rules:
-  - host: kuma.local
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: kuma
-            port:
-              number: 80
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 3001
+    nodePort: 31001
+  selector:
+    app: uptime-kuma
