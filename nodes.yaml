@@ -49,9 +49,14 @@
         register: join_command_result
         when: inventory_hostname in groups['controllers']
 
+      - name: Debug join command output
+        debug:
+          var: join_command_result.stdout_lines
+        when: join_command_result is defined
+
       - name: Set join command as fact
         set_fact:
-          microk8s_join_command: "{{ join_command_result.stdout_lines[0] }}"
+          microk8s_join_command: "{{ join_command_result.stdout_lines[2] }}"
         when: join_command_result is defined
 
       delegate_to: "{{ groups['controllers'][0] }}"
