@@ -68,4 +68,4 @@ spec:
     targetPort: 3001
     nodePort: 31001
   selector:
-    app: uptime-kuma
+    app: kuma
