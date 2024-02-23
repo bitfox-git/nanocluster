@@ -109,7 +109,7 @@ ansible-playbook -i /etc/ansible/hosts /etc/ansible/playbooks/nodes.yaml
 Copy the Kubernetes config to the workstation to use `kubectl`. 
 
 ```sh
-ssh dietpi@192.168.107.101 "microk8s config"
+mkdir ~/.kube && ssh dietpi@192.168.107.101 "microk8s config" > ~/.kube/config
 ```
 
 ### Kubernetes dashboard
