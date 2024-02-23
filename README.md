@@ -103,6 +103,11 @@ Create the playbook for installing Kubernetes:
   remote_user: dietpi
   become: yes
   tasks:
+    - name: Disable root login by changing shell
+      user:
+        name: root
+        shell: /usr/sbin/nologin
+
     - name: Update DietPi
       command: /boot/dietpi/dietpi-update
 
@@ -136,11 +141,6 @@ Create the playbook for installing Kubernetes:
     - name: Wait for MicroK8s to be ready
       command: microk8s status --wait-ready
       become_user: "{{ ansible_user }}"
-
-    - name: Disable root login by changing shell
-      user:
-        name: root
-        shell: /usr/sbin/nologin
 ```
 
 Ansible requires python so use [this script](py.sh) to install it before running:
