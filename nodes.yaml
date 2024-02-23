@@ -1,5 +1,5 @@
 ---
-- name: NanoPI Cluster
+- name: Install NanoPI Cluster
   hosts: nodes
   remote_user: dietpi
   become: yes

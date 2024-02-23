@@ -1,0 +1,5 @@
+{
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json#/$defs/playbook": "file:///c%3A/Users/n.zuijdervelt/OneDrive%20-%20Celes%20Group/Documenten/GitHub/nanocluster/cluster.yaml"
+    }
+}
