@@ -85,6 +85,9 @@ Add the managed hosts
 ```
 /etc/ansible/hosts
 ---
+[controllers]
+192.168.107.101
+
 [nodes]
 192.168.107.101
 192.168.107.102
