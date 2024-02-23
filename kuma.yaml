@@ -4,16 +4,17 @@ metadata:
   name: kuma
 ---
 apiVersion: v1
-kind: PersistentVolumeClaim
+kind: PersistentVolume
 metadata:
   name: kuma-pvc
   namespace: kuma
 spec:
   accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Mi
+    - ReadWriteOnce
+  capacity:
+    storage: 5Gi
+  hostPath:
+    path: /data/kuma/
 ---
 apiVersion: apps/v1
 kind: Deployment
