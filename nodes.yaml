@@ -30,10 +30,10 @@
 
     - name: Add the current user to the microk8s group
       user:
-        name: "{{ dietpi }}"
+        name: dietpi
         groups: microk8s
         append: yes
 
     - name: Wait for MicroK8s to be ready
       command: microk8s status --wait-ready
-      become_user: "{{ dietpi }}"
+      become_user: dietpi
