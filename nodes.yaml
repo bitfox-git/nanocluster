@@ -36,4 +36,6 @@
 
     - name: Wait for MicroK8s to be ready
       command: microk8s status --wait-ready
+      environment:
+        PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
       become_user: dietpi
