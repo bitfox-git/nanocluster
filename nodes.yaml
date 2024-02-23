@@ -43,11 +43,11 @@
 
     - block:
       - name: Generate MicroK8s join command on the primary node
-        environment:
-          PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
         command: microk8s add-node
         register: join_command_result
         when: inventory_hostname in groups['controllers']
+        environment:
+          PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
 
       - name: Debug join command output
         debug:
@@ -62,20 +62,16 @@
       delegate_to: "{{ groups['controllers'][0] }}"
       run_once: true
 
-    - name: Debug print join command
-      debug:
-        msg: "Join command to be executed: {{ hostvars[groups['controllers'][0]].microk8s_join_command }}"
-      when: not inventory_hostname in groups['controllers']
-
     - name: Join worker nodes to the MicroK8s cluster
-      environment:
-        PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
       command: "{{ hostvars[groups['controllers'][0]].microk8s_join_command }}"
       when: not inventory_hostname in groups['controllers']
-
-    - name: Verify cluster nodes
       environment:
         PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
+      ignore_errors: yes
+
+    - name: Verify cluster nodes
       command: microk8s kubectl get nodes
       delegate_to: "{{ groups['controllers'][0] }}"
       run_once: true
+      environment:
+        PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
