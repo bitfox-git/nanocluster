@@ -103,3 +103,12 @@ Ansible requires python so use [this script](py.sh) to install it before running
 ```sh
 ansible-playbook -i /etc/ansible/hosts /etc/ansible/playbooks/nodes.yaml
 ```
+
+### Kubernetes dashboard
+
+Access the Kubernetes dashboard:
+
+```sh
+ssh dietpi@192.168.107.101
+microk8s dashboard-proxy
+```
