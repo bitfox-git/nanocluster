@@ -68,6 +68,8 @@
       when: not inventory_hostname in groups['controllers']
 
     - name: Join worker nodes to the MicroK8s cluster
+      environment:
+        PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
       command: "{{ hostvars[groups['controllers'][0]].microk8s_join_command }}"
       when: not inventory_hostname in groups['controllers']
 
