@@ -14,6 +14,7 @@ After that, boot into Raspberry Pi OS and install the folowing software:
 - gnome-disk-utils
 - gnome-software
 - podman
+- kubernetes-client (kubectl)
 - vs code
 - Open Lens or Seabird
 
