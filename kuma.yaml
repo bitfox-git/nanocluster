@@ -55,3 +55,23 @@ spec:
     targetPort: 3001
   selector:
     app: kuma
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kuma-ingress
+  namespace: kuma
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+  - host: kuma.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kuma
+            port:
+              number: 80
