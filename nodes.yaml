@@ -35,10 +35,10 @@
 
     - name: Add the current user to the microk8s group
       user:
-        name: "{{ ansible_user }}"
+        name: "{{ dietpi }}"
         groups: microk8s
         append: yes
 
     - name: Wait for MicroK8s to be ready
       command: microk8s status --wait-ready
-      become_user: "{{ ansible_user }}"
+      become_user: "{{ dietpi }}"
