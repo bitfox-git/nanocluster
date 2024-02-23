@@ -11,10 +11,9 @@ metadata:
 spec:
   accessModes:
   - ReadWriteOnce
-  capacity:
-    storage: 1Gi
-  hostPath:
-    path: /data/pv0001/
+  resources:
+    requests:
+      storage: 1Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
