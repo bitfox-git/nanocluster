@@ -1,8 +1,9 @@
 ---
-- name: Install MicroK8s on DietPi/Debian nodes
+- name: NanoPI Cluster
   hosts: nodes
   remote_user: dietpi
   become: yes
+  gather_facts: yes
   tasks:
     - name: Disable root login by changing shell
       user:
@@ -39,3 +40,40 @@
       environment:
         PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
       become_user: dietpi
+
+- name: Generate MicroK8s join command on the primary node
+  hosts: primary
+  become: yes
+  tasks:
+    - name: Add node and get join command
+      environment:
+        PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
+      command: microk8s add-node
+      register: join_command_output
+
+    - block:
+      - name: Generate MicroK8s join command on the primary node
+        environment:
+          PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
+        command: microk8s add-node
+        register: join_command_result
+        when: inventory_hostname in groups['primary_node']
+
+      - name: Set join command as fact
+        set_fact:
+          microk8s_join_command: "{{ join_command_result.stdout_lines[0] }}"
+        when: join_command_result is defined
+
+      delegate_to: "{{ groups['primary_node'][0] }}"
+      run_once: true
+
+    - name: Join worker nodes to the MicroK8s cluster
+      command: "{{ hostvars[groups['primary_node'][0]].microk8s_join_command }}"
+      when: inventory_hostname in groups['worker_nodes']
+
+    - name: Verify cluster nodes
+      environment:
+        PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
+      command: microk8s kubectl get nodes
+      delegate_to: "{{ groups['primary_node'][0] }}"
+      run_once: true
