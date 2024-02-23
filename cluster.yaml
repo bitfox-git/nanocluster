@@ -2,7 +2,7 @@
 - name: Create NanoPI Cluster
   hosts: nodes
   remote_user: dietpi
-  become: yes
+  become: true
   tasks:
     - name: Generate join token on master node
       ansible.builtin.shell: "microk8s add-node | grep microk8s join"
