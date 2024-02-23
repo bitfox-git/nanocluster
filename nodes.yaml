@@ -12,11 +12,6 @@
     - name: Update DietPi
       command: /boot/dietpi/dietpi-update
 
-    - name: Update apt cache
-      apt:
-        update_cache: yes
-      changed_when: false
-
     - name: Install snapd with apt
       apt:
         name: snapd
