@@ -63,10 +63,16 @@
       run_once: true
 
     - name: Join worker nodes to the MicroK8s cluster
-      command: "{{ hostvars[groups['controllers'][0]].microk8s_join_command }}"
-      when: not inventory_hostname in groups['controllers']
+      shell: "{{ hostvars[groups['controllers'][0]].microk8s_join_command }}"
+      args:
+        executable: /bin/bash
       environment:
         PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
+      when: not inventory_hostname in groups['controllers']
+      retries: 3
+      delay: 10
+      register: join_result
+      until: join_result.rc == 0
       ignore_errors: yes
 
     - name: Verify cluster nodes
