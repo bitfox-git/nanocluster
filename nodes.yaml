@@ -41,16 +41,6 @@
         PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
       become_user: dietpi
 
-- name: Generate MicroK8s join command on the primary node
-  hosts: primary
-  become: yes
-  tasks:
-    - name: Add node and get join command
-      environment:
-        PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
-      command: microk8s add-node
-      register: join_command_output
-
     - block:
       - name: Generate MicroK8s join command on the primary node
         environment:
