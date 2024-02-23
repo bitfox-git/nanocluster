@@ -3,6 +3,18 @@ kind: Namespace
 metadata:
   name: kuma
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kuma-pvc
+  namespace: kuma
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Mi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
