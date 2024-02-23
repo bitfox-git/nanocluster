@@ -15,12 +15,15 @@ After that, boot into Raspberry Pi OS and install the folowing software:
 - gnome-software
 - podman
 - vs code
+- Open Lens or Seabird
 
 Setup the [flathub](https://flathub.org/setup/Raspberry%20Pi%20OS) and install [pods](https://flathub.org/apps/com.github.marhkb.Pods):
 
 ```
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak install flathub com.github.marhkb.Pods
+flatpak install flathub dev.k8slens.OpenLens
+flatpak install flathub dev.skynomads.Seabird
 ```
 
 ## Troubleshooting
