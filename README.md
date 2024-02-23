@@ -103,23 +103,3 @@ Ansible requires python so use [this script](py.sh) to install it before running
 ```sh
 ansible-playbook -i /etc/ansible/hosts /etc/ansible/playbooks/nodes.yaml
 ```
-
-### Add nodes to cluster
-
-Adding the worker nodes to the controller can be tricky. So, do that manually:
-
-1. Create a token on the master node. This is for sinle use only. 
-
-```sh
-ssh dietpi@192.168.107.101
-microk8s add-node
-```
-
-2. Use that token to add a worker node
-
-```sh
-ssh dietpi@192.168.107.102
-microk8s join 192.168.107.101:25000/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/xxxxxxxxxxxx --worker
-```
-
-3. Repeat from the first step.

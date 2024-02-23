@@ -54,3 +54,20 @@
       become_user: dietpi
       delegate_to: "{{ groups['controllers'][0] }}"
       run_once: true
+
+    - name: Generate join token on master node
+      ansible.builtin.shell: "microk8s add-node | grep microk8s | grep worker"
+      register: join_command_output
+      when: inventory_hostname in groups['controllers']
+      environment:
+        PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
+      delegate_to: "{{ master_node_hostname }}"
+      run_once: true
+
+    - name: Join cluster
+      when: not inventory_hostname in groups['controllers']
+      environment:
+        PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
+      ansible.builtin.shell: "{{ hostvars['controllers']['join_command_output']['stdout'] }}"
+      delegate_to: "{{ inventory_hostname }}"
+      run_once: true
