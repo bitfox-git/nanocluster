@@ -59,7 +59,7 @@
 
     - name: Join worker nodes to the MicroK8s cluster
       command: "{{ hostvars[groups['controllers'][0]].microk8s_join_command }}"
-      when: inventory_hostname in groups['worker_nodes']
+      when: not inventory_hostname in groups['controllers']
 
     - name: Verify cluster nodes
       environment:
