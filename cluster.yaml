@@ -5,7 +5,7 @@
   become: true
   tasks:
     - name: Generate join token on master node
-      ansible.builtin.shell: "microk8s add-node | grep microk8s join"
+      ansible.builtin.shell: "microk8s add-node | grep microk8s | grep worker"
       register: join_command_output
       when: inventory_hostname in groups['controllers']
       environment:
