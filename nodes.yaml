@@ -3,7 +3,6 @@
   hosts: nodes
   remote_user: dietpi
   become: yes
-  gather_facts: yes
   tasks:
     - name: Disable root login by changing shell
       user:
