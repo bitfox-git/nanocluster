@@ -94,63 +94,9 @@ Add the managed hosts
 192.168.107.106
 ```
 
-Create the playbook for installing Kubernetes: 
-
-```yaml
----
-- name: Install MicroK8s on DietPi/Debian nodes
-  hosts: nodes
-  remote_user: dietpi
-  become: yes
-  tasks:
-    - name: Disable root login by changing shell
-      user:
-        name: root
-        shell: /usr/sbin/nologin
-
-    - name: Update DietPi
-      command: /boot/dietpi/dietpi-update
-
-    - name: Update apt cache
-      apt:
-        update_cache: yes
-      changed_when: false
-
-    - name: Install snapd with apt
-      apt:
-        name: snapd
-        state: present
-
-    - name: Ensure snapd service is running
-      service:
-        name: snapd
-        state: started
-        enabled: yes
-
-    - name: Install MicroK8s
-      command: snap install microk8s --classic
-      args:
-        creates: /snap/bin/microk8s
-
-    - name: Add the current user to the microk8s group
-      user:
-        name: "{{ ansible_user }}"
-        groups: microk8s
-        append: yes
-
-    - name: Wait for MicroK8s to be ready
-      command: microk8s status --wait-ready
-      become_user: "{{ ansible_user }}"
-```
-
+use [this](nodes.yaml) playbook for installing Kubernetes.
 Ansible requires python so use [this script](py.sh) to install it before running:
 
 ```sh
 ansible-playbook -i /etc/ansible/hosts /etc/ansible/playbooks/nodes.yaml
 ```
-
-<!-- Verify the nodes on neo1:
-
-```sh
-kubectl get nodes
-``` -->
