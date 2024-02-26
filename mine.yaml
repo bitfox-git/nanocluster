@@ -90,8 +90,12 @@ spec:
         - name: mine-config-storage
           mountPath: /etc/minetest
         resources:
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
           requests:
             cpu: "100m"
+            memory: "256Mi"
       restartPolicy: Always
       volumes:
       - name: mine-data-storage
@@ -114,6 +118,7 @@ spec:
   minReplicas: 1
   maxReplicas: 4
   targetCPUUtilizationPercentage: 50
+  targetMemoryUtilizationPercentage: 50
 ---
 apiVersion: v1
 kind: Service
