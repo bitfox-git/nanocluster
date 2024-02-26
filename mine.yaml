@@ -121,20 +121,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mine-node
-  namespace: mine
-spec:
-  type: NodePort
-  ports:
-  - port: 80
-    targetPort: 3001
-    nodePort: 31001
-  selector:
-    app: minetest
----
-apiVersion: v1
-kind: Service
-metadata:
   name: mine-service
   namespace: mine
 spec:
