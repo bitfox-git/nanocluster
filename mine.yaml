@@ -101,12 +101,13 @@ spec:
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: mine-scaling
+  name: mine-hpa
   namespace: mine
 spec:
   scaleTargetRef:
-    kind: ReplicationController
-    name: mine-scaling
+    apiVersion: apps/v1
+    kind: Deployment
+    name: mine-deployment
   minReplicas: 1
   maxReplicas: 4
   targetCPUUtilizationPercentage: 50
