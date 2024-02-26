@@ -105,7 +105,7 @@ spec:
         persistentVolumeClaim:
           claimName: mine-config-pvc
 ---
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: mine-hpa
@@ -117,8 +117,23 @@ spec:
     name: mine-deployment
   minReplicas: 1
   maxReplicas: 4
-  targetCPUUtilizationPercentage: 50
-  targetMemoryUtilizationPercentage: 50
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Pods
+        value: 4
+        periodSeconds: 60
+      - type: Percent
+        value: 10
+        periodSeconds: 60
 ---
 apiVersion: v1
 kind: Service
