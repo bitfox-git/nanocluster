@@ -121,8 +121,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: kuma-node
-  namespace: kuma
+  name: mine-node
+  namespace: mine
 spec:
   type: NodePort
   ports:
@@ -130,7 +130,7 @@ spec:
     targetPort: 3001
     nodePort: 31001
   selector:
-    app: kuma
+    app: minetest
 ---
 apiVersion: v1
 kind: Service
@@ -169,4 +169,4 @@ spec:
     nodePort: 30000
     protocol: UDP
   selector:
-    app: kuma
+    app: minetest
