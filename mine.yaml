@@ -89,6 +89,9 @@ spec:
           mountPath: /var/lib/minetest
         - name: mine-config-storage
           mountPath: /etc/minetest
+        resources:
+          requests:
+            cpu: "100m"
       restartPolicy: Always
       volumes:
       - name: mine-data-storage
@@ -97,9 +100,6 @@ spec:
       - name: mine-config-storage
         persistentVolumeClaim:
           claimName: mine-config-pvc
-      resources:
-        requests:
-          cpu: "100m"
 ---
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
