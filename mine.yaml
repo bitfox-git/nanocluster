@@ -104,10 +104,9 @@ metadata:
   name: mine-scaling
   namespace: mine
 spec:
-  scaleRef:
+  scaleTargetRef:
     kind: ReplicationController
     name: mine-scaling
-    subresource: scale
   minReplicas: 1
   maxReplicas: 4
   targetCPUUtilizationPercentage: 50
