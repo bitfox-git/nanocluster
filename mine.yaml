@@ -97,6 +97,9 @@ spec:
       - name: mine-config-storage
         persistentVolumeClaim:
           claimName: mine-config-pvc
+      resources:
+        requests:
+          cpu: "100m"
 ---
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
