@@ -87,18 +87,6 @@ spec:
     requests:
       storage: 1Gi
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis
-  namespace: redis
-spec:
-  ports:
-    - port: 6379
-  selector:
-    app: redis
-  type: ClusterIP
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -132,3 +120,29 @@ spec:
         - name: redis-data
           persistentVolumeClaim:
             claimName: redis-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: redis
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6380
+  selector:
+    app: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-node
+  namespace: redis
+spec:
+  type: NodePort
+  ports:
+  - port: 6379
+    targetPort: 6380
+    nodePort: 30379
+  selector:
+    app: redis
