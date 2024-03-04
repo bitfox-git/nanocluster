@@ -132,3 +132,11 @@ microk8s kubectl create token default
 ```sh
 sudo /snap/bin/microk8s kubectl port-forward -n kube-system service/kubernetes-dashboard 10443:443 --address 0.0.0.0 &
 ```
+
+### OpenLDAP & Azure AD
+
+```sh
+random_password=$(openssl rand -base64 36)
+sed -i "s/ThisIsNotASecurePassword/${random_password}/g" authentik.values.yaml
+microk8s helm upgrade --install authentik authentik/authentik -f authentik.values.yaml
+```

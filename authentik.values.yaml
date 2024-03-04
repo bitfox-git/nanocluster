@@ -1,0 +1,20 @@
+authentik:
+  error_reporting:
+    enabled: false
+  postgresql:
+    password: "ThisIsNotASecurePassword"
+
+ingress:
+  # Specify kubernetes ingress controller class name
+  # Options: nginx | traefik | kong
+  ingressClassName: traefik
+  enabled: true
+  hosts:
+    - authentik.local
+
+postgresql:
+  enabled: true
+  auth:
+    password: "ThisIsNotASecurePassword"
+redis:
+  enabled: true
