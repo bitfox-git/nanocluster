@@ -39,6 +39,7 @@ spec:
         volumeMounts:
         - name: kuma-data
           mountPath: /app/data
+      restartPolicy: Always
       volumes:
       - name: kuma-data
         persistentVolumeClaim:
