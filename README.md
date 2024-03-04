@@ -127,8 +127,8 @@ ssh dietpi@192.168.107.101
 microk8s kubectl create token default
 ```
 
-3) Run the dashboard
+3) Run the dashboard in the background
 
 ```sh
-sudo /snap/bin/microk8s kubectl port-forward -n kube-system service/kubernetes-dashboard 10443:443 --address 0.0.0.0
+sudo /snap/bin/microk8s kubectl port-forward -n kube-system service/kubernetes-dashboard 10443:443 --address 0.0.0.0 &
 ```
