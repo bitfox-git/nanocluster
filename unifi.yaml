@@ -1,0 +1,275 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: unifi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: unifi-pv
+  namespace: unifi
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  local:
+    path: /data/unifi
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - MicroK8sWorker1.local
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: unifi-pv-claim
+  namespace: unifi
+  labels:
+    app: unifi
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ""
+  volumeName: unifi-pv
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unifi-deployment
+  namespace: unifi
+  labels:
+    app: unifi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unifi
+  template:
+    metadata:
+      labels:
+        app: unifi
+    spec:
+      containers:
+        - name: unifi
+          image: linuxserver/unifi-controller:latest
+          ports:
+            - containerPort: 3478
+              protocol: UDP
+            - containerPort: 10001
+              protocol: UDP
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 8443
+              protocol: TCP
+            - containerPort: 1900
+              protocol: UDP
+            - containerPort: 8843
+              protocol: TCP
+            - containerPort: 8880
+              protocol: TCP
+            - containerPort: 6789
+              protocol: TCP
+            - containerPort: 5514
+              protocol: UDP
+          volumeMounts:
+            - name: unifi-persistent-storage
+              mountPath: /config
+      volumes:
+      - name: unifi-persistent-storage
+        persistentVolumeClaim:
+          claimName: unifi-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: unifi
+  namespace: unifi
+spec:
+  type: ClusterIP
+  selector:
+    app: unifi
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      protocol: TCP
+    - name: https
+      port: 443
+      targetPort: 8443
+      protocol: TCP
+    - name: port3478
+      port: 3478
+      targetPort: 3478
+      protocol: UDP
+    - name: unifidiscovery
+      port: 10001
+      targetPort: 10001
+      protocol: UDP
+    - name: port8080
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+    - name: port8443
+      port: 8443
+      targetPort: 8443
+      protocol: TCP
+    - name: port1900
+      port: 1900
+      targetPort: 1900
+      protocol: UDP
+    - name: port8843
+      port: 8843
+      targetPort: 8843
+      protocol: TCP
+    - name: port8880
+      port: 8880
+      targetPort: 8880
+      protocol: TCP
+    - name: port6789
+      port: 6789
+      targetPort: 6789
+      protocol: TCP
+    - name: port5514
+      port: 5514
+      targetPort: 5514
+      protocol: UDP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: unifi-ingress-udp
+  namespace: ingress
+  annotations:
+    metallb.universe.tf/allow-shared-ip: "unifi-shared-ip"
+spec:
+  selector:
+    name: nginx-ingress-microk8s
+  type: LoadBalancer
+  ports:
+    - name: udp-1900
+      protocol: UDP
+      port: 1900
+      targetPort: 1900
+    - name: udp-3478
+      protocol: UDP
+      port: 3478
+      targetPort: 3478
+    - name: udp-5514
+      protocol: UDP
+      port: 5514
+      targetPort: 5514
+    - name: udp-10001
+      protocol: UDP
+      port: 10001
+      targetPort: 10001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: unifi-ingress-tcp
+  namespace: ingress
+  annotations:
+    metallb.universe.tf/allow-shared-ip: "unifi-shared-ip"
+spec:
+  selector:
+    name: nginx-ingress-microk8s
+  type: LoadBalancer
+  # loadBalancerIP is optional. MetalLB will automatically allocate an IP 
+  # from its pool if not specified. You can also specify one manually.
+  # loadBalancerIP: x.y.z.a
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 443
+    - name: tcp-8080
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+    - name: tcp-8443
+      protocol: TCP
+      port: 8443
+      targetPort: 8443
+    - name: tcp-6789
+      protocol: TCP
+      port: 6789
+      targetPort: 6789
+    - name: tcp-8843
+      protocol: TCP
+      port: 8843
+      targetPort: 8843
+    - name: tcp-8880
+      protocol: TCP
+      port: 8880
+      targetPort: 8880
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: unifi-tls
+  namespace: unifi
+type: kubernetes.io/tls
+data:
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUNzekNDQVpzQ0ZFYjRjRVEzendBdmRpYkY4bitaRXdSZ2RWUEtNQTBHQ1NxR1NJYjNEUUVCQ3dVQU1CWXgKRkRBU0JnTlZCQU1NQzNWdWFXWnBMbXh2WTJGc01CNFhEVEkwTURNd05ERXpNemcwTjFvWERUSTFNRE13TkRFegpNemcwTjFvd0ZqRVVNQklHQTFVRUF3d0xkVzVwWm1rdWJHOWpZV3d3Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBCkE0SUJEd0F3Z2dFS0FvSUJBUUM3Q2Iwb0JTNkx5RFN1L0QrUWROTTdmU1J6MEZsaS9mKytUQWtkR2t3UFlZRHMKcXVkNmdWV2QwTFV3TDlZU24wc210R1NQYXUzemdzOFFtbS85NWpraWl0ampiWlJUaTA0ck9FeU41OEdYVUk3NwpMYWJ3Tmd6ZmJRNWwyRVVRZkJ6Z3VocElaSkF0TG5od3BuZThwTjFod3hWbW41SmRsWTNSOGlPM3QveUY2ajNvCk9ZWEV3TmlVcUp4eW9FZWlBb0NDdk5pRWJZeE1KTER3U2xBZW9TZ09vbXFPV1NGakxydUtGS0lZRnFmWUY1UnYKWnppNFo5TXpSdHU5QWRyU2JCVkRNWGE4dVAyYWlqaFRsOFVYQmJndVlEckg5L05hKzlUaHZ0b1FDV3h6OXJPbgpoZzJGRVU2TmZFdFJHVGplRUs4YmE0QUxERkdnQUNITk8vcVl3dzVSQWdNQkFBRXdEUVlKS29aSWh2Y05BUUVMCkJRQURnZ0VCQUVnK3FGZ3ZlOWpzemhyY3RqRnFUZlBXRm5aVkVaV2tnLzNmWDlHSk5ndU1nd2ZpaWdqV3NwSjkKOWo3Qno2T3VwdDZQa2x3b055Q1lST1V4cG9tKzBWbG9TcU9udmlxbklOZ01vRDZwSDAwVmdYTUZhckhIT2JodgpOUkx1ZG05UFNPeEV2K0JDMytFWG84TWlJVnMyc3YwU0lLM0FrVjhnK2xiWjV5akhnYm4yWnRRNFQ5Qk1NbTZYClNlcDd3LzZ3dVYyKzY3aEN4V3FjaTRHRHNUSGVieDk1UCtRK3VweVlGc2pKOFEyRFdsSVVCYVZQaC8yMm5CeXoKVm1iNEZRQTZtbHBKUVFoTXFqdFZpTVRVcVJnTE90UVM3U1IrU28vR1JrWDdFMUE4aytHR2I0dXp2c3lnWlhpTgppU0dtOXlzYnBTZ0MrRnVTTmpvUWlyZnc2K0dYMWlFPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+  tls.key: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2UUlCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktjd2dnU2pBZ0VBQW9JQkFRQzdDYjBvQlM2THlEU3UKL0QrUWROTTdmU1J6MEZsaS9mKytUQWtkR2t3UFlZRHNxdWQ2Z1ZXZDBMVXdMOVlTbjBzbXRHU1BhdTN6Z3M4UQptbS85NWpraWl0ampiWlJUaTA0ck9FeU41OEdYVUk3N0xhYndOZ3pmYlE1bDJFVVFmQnpndWhwSVpKQXRMbmh3CnBuZThwTjFod3hWbW41SmRsWTNSOGlPM3QveUY2ajNvT1lYRXdOaVVxSnh5b0VlaUFvQ0N2TmlFYll4TUpMRHcKU2xBZW9TZ09vbXFPV1NGakxydUtGS0lZRnFmWUY1UnZaemk0WjlNelJ0dTlBZHJTYkJWRE1YYTh1UDJhaWpoVApsOFVYQmJndVlEckg5L05hKzlUaHZ0b1FDV3h6OXJPbmhnMkZFVTZOZkV0UkdUamVFSzhiYTRBTERGR2dBQ0hOCk8vcVl3dzVSQWdNQkFBRUNnZ0VBTDNmT3hrL2VXc0ppUUlDclB5V3ZFRHQzMjE2bXVOMWVvUFNhSVlVeGhYdkkKNVFlUXZNSURNUXl0Vnova3RCQXlXZTNSVWFhaElqcHlBN1EyTlBsUFNjbDBOdS95QTJ2bzJFWXZBNXFzUXBOQwozbE5kT1R4MmN1T3lFajNiZFU0U1pDUkhGRlZWVStvbHplMHBtVG84SnhvRUhlbmtreFNvQy83SWV0RmFhTCsxClAzTUxUbnp5bzVzak14RkxCNloxVXNVUVpZWWNkcWw3UjdTQ0VUWi9tSmoxamZsTC9vb3ZlK0gxczdMVGtjdFgKdHYvSktVZjY0MjcvYkhlaTJiYTVsWWVXTjdjcVdpWFZ5cHFEZTZuQlBzWUo5UjlsenRLZmhTc3MvSi82N3dYcwpCRWZJd2g4eWJDdk9mczlDalZCbTNFUTViWHkzamVGOHNVdk1VY2lWTXdLQmdRRHJPY0FReHFRWnRTV0dubVh5CnBxeTk2QnFmN1JFZTcwUkpSdXVmaThkbDBLUEV6ZC91MnQ5SFl1ckU0Zi9sMWJLaU1sMDFhZzNUSHFEeXpjRncKUXpBdEJWV1lGSlNXRlNMZm1McWJ3SXpYS1huemRtdWtISGU0TG9xMTNLZDlDcHRNTm50R2RzbDZlTTVZbGtMMAo3WFd1R1IxdXdEa1cwajJFblNuTzNteGNyd0tCZ1FETGpvSm5PMm0xaDVOckwvb2Q3VlF3emRYZFp4UGZJZ2tYCjZFczNHYUF3aVZ2TmNLUEZXdUVpYUVzemJxenQyYTlkUUNuZzc0bVVxQm5WWlVIN05pMWxaT1diMmxJS0R3d24KRC9XSVhNMVpaMXJidko4a1pmOFgwUCtyVVlyMTRqYTN1bjVnRHBUVzRsS082ZkJiTUFyZjhBcWtVUncvSUpUZQpnMHNTVktBRS93S0JnUURiZ2lydi9NOEtobmNjWnhpd0ZrWkJlaVhPZEVaejNjaVZzUzhVMWpZZmwxSWN5QnBmCkpiVVRRd1hlOFNBQ2RTZWNJTy9HZHMrcjRudEQyaXJYL25zb3FEKzJDZzZXOStaeFRtOW1CWXZwQmZXZDh6YUUKRVdUUFplOWZ3eWd4a2dKV1hza3ZlbzZPVWNvTjlUdEtvWVllRDZYZHdsZ0VLZkhxblZkMGl6QUlWUUtCZ0dqegpleXk2cDFBZkxOVHhFYVpvZlNZRW1xWGl4WTRnUUV3QlN2YUgwZDMwbEU2aUt1NVFZdytZY2wxOFRORDlrYnNrCm4vTUh6Z25GZWp4YVR1QzFHRWJVOU1XY2xQdjJzaTladlNDbnFJRFdGelNBVmhVd09Zd1FDQ0pPa3JVZ0ExSkwKWjJralczNUhob1dFL0pZbmVSUG84Yk95MWp0K0V3Tis4aS9yVGU0RkFvR0FiUVdyYWF5MjVZdDdPbGRmN0ZkbAozUDJLbVFvK1hBS1JJVVR2Vkh4QXRjV0RyTkcxZUxoWkZHV0JrR0FLOE85Ti8xbHBURFh2UHBmYUduN3h0bUk1ClBOa2NmcTFBb0t5dExHZ2lxN2pCVFUvQ3NhZTFBa3dRNFZmR055QUxic1pDbm52UHJmdDZmMkNjOVUvSDlVZ0QKSzd1V0JZejdFZVNqekxPRytMaGVtNDA9Ci0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0K
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: unifi-ingress
+  namespace: unifi
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  tls:
+    - hosts:
+        - unifi.local
+      secretName: unifi-tls
+  rules:
+    - host: unifi.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: unifi
+                port:
+                  number: 443
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-ingress-udp-microk8s-conf
+  namespace: ingress
+data:
+  1900: "default/unifi:1900"
+  3478: "default/unifi:3478"
+  5514: "default/unifi:5514"
+  10001: "default/unifi:10001"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-ingress-tcp-microk8s-conf
+  namespace: ingress
+data:
+  6789: "default/unifi:6789"
+  8080: "default/unifi:8080"
+  8443: "default/unifi:8443"
+  8843: "default/unifi:8843"
+  8880: "default/unifi:8880"
