@@ -15,14 +15,6 @@ spec:
     - ReadWriteOnce
   local:
     path: /data/unifi
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - MicroK8sWorker1.local
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
