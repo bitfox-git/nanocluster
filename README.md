@@ -114,8 +114,21 @@ mkdir ~/.kube && ssh dietpi@192.168.107.101 "/snap/bin/microk8s config" > ~/.kub
 
 ### Kubernetes dashboard
 
-Access the Kubernetes dashboard:
+Access the Kubernetes dashboard.
+
+1) Login
+```sh
+ssh dietpi@192.168.107.101
+```
+
+2) Create a token
 
 ```sh
-ssh dietpi@192.168.107.101 "/snap/bin/microk8s dashboard-proxy"
+microk8s kubectl create token default
+```
+
+3) Run the dashboard
+
+```sh
+sudo /snap/bin/microk8s kubectl port-forward -n kube-system service/kubernetes-dashboard 10443:443 --address 0.0.0.0
 ```
