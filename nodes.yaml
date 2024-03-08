@@ -40,7 +40,7 @@
     - name: Bootstrap Ceph
       command: microceph cluster bootstrap
       args:
-        creates: /snap/bin/microk8s
+        creates: /snap/bin/microceph
 
     - name: Wait for MicroK8s to be ready
       command: microk8s status --wait-ready
