@@ -1,0 +1,175 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mine
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mine-data-pvc
+  namespace: mine
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 5Gi
+  hostPath:
+    path: /data/mine/data/
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mine-config-pvc
+  namespace: mine
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 1Mi
+  hostPath:
+    path: /data/mine/config/
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mine-deployment
+  namespace: mine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minetest
+  template:
+    metadata:
+      labels:
+        app: minetest
+    spec:
+      initContainers:
+      - name: init-mine-data
+        image: alpine:latest
+        command: 
+        - 'sh'
+        - '-c'
+        - 'chown -R 30000:30000 /var/lib/minetest'
+        volumeMounts:
+        - name: mine-data-storage
+          mountPath: /var/lib/minetest
+      - name: init-mine-config
+        image: alpine:latest
+        command: 
+          - "/bin/sh"
+          - "-c"
+          - | 
+            echo "name = noobping
+              port = 29999
+              bind_address = 0.0.0.0
+              server_name = lucralan
+              server_description = 'Lucrasoft\'s (W)LAN Party'
+              server_address = mine.labs.lucrasoft.nl
+              server_announce = false
+              serverlist_url = servers.minetest.net
+              default_game = minetest
+            " > /etc/minetest/minetest.conf
+        volumeMounts:
+        - name: mine-config-storage
+          mountPath: /etc/minetest
+      containers:
+      - name: minetest
+        image: registry.gitlab.com/minetest/minetest/server:master
+        args:
+        - --config
+        - /etc/minetest/minetest.conf
+        ports:
+        - containerPort: 29999
+          protocol: TCP
+        - containerPort: 29999
+          protocol: UDP
+        volumeMounts:
+        - name: mine-data-storage
+          mountPath: /var/lib/minetest
+        - name: mine-config-storage
+          mountPath: /etc/minetest
+        resources:
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+      restartPolicy: Always
+      volumes:
+      - name: mine-data-storage
+        persistentVolumeClaim:
+          claimName: mine-data-pvc
+      - name: mine-config-storage
+        persistentVolumeClaim:
+          claimName: mine-config-pvc
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: mine-hpa
+  namespace: mine
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: mine-deployment
+  minReplicas: 1
+  maxReplicas: 4
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Pods
+        value: 4
+        periodSeconds: 60
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mine-service
+  namespace: mine
+spec:
+  ports:
+  - name: mine-tcp-service
+    port: 29999
+    targetPort: 29998
+    protocol: TCP
+  - name: mine-udp-service
+    port: 29999
+    targetPort: 29998
+    protocol: UDP
+  selector:
+    app: minetest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mine-node
+  namespace: mine
+spec:
+  type: NodePort
+  ports:
+  - name: mine-tcp-port
+    port: 29999
+    targetPort: 29998
+    nodePort: 30000
+    protocol: TCP
+  - name: mine-udp-port
+    port: 29999
+    targetPort: 29998
+    nodePort: 30000
+    protocol: UDP
+  selector:
+    app: minetest

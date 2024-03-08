@@ -30,6 +30,22 @@ flatpak install flathub dev.skynomads.Seabird
 
 ## Troubleshooting
 
+### Git
+
+Automatically reapply manually fixed conflicts:
+
+```sh
+git config --global rerere.enabled true
+```
+
+Sign commits with the ssh key:
+
+```sh
+git config --global gpg.format ssh
+git config --global user.signingkey ~/.ssh/id_rsa.pub
+git config --global commit.gpgsign true
+```
+
 ### Directories are not opened in the file manager
 
 ```
