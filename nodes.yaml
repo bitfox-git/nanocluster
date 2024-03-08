@@ -37,10 +37,10 @@
         groups: microk8s
         append: yes
 
-    - name: Bootstrap Ceph
-      command: microceph cluster bootstrap
-      args:
-        creates: /snap/bin/microceph
+    # - name: Bootstrap Ceph
+    #   command: microceph cluster bootstrap
+    #   args:
+    #     creates: /snap/bin/microceph
 
     - name: Wait for MicroK8s to be ready
       command: microk8s status --wait-ready

@@ -112,6 +112,12 @@ Copy the Kubernetes config to the workstation to use `kubectl`.
 mkdir ~/.kube && ssh dietpi@192.168.107.101 "/snap/bin/microk8s config" > ~/.kube/config
 ```
 
+### Cluster filesystem
+
+```sh
+sudo /snap/bin/microceph cluster bootstrap
+```
+
 ### Kubernetes dashboard
 
 Access the Kubernetes dashboard.
