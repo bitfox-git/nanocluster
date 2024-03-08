@@ -13,11 +13,14 @@
     - name: Update DietPi
       command: /boot/dietpi/dietpi-update
 
-    - name: Install snapd and ceph with apt
+    - name: Install snapd with apt
       apt:
-        name: |
-          snapd
-          ceph
+        name: snapd
+        state: present
+
+    - name: Install ceph with apt
+      apt:
+        name: ceph
         state: present
 
     - name: Ensure snapd service is running
