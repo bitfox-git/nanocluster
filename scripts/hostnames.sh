@@ -8,7 +8,7 @@ end=106
 # Loop through the range and run the SSH command in the background
 for i in $(seq $start $end); do
   ip="${prefix}${i}"
-  ssh -o StrictHostKeyChecking=no dietpi@$ip "sudo hostnamectl hostname "$(sudo cat /etc/hostname).ls-iot.local"" &
+  ssh -o StrictHostKeyChecking=no dietpi@$ip "sudo hostnamectl hostname \"neo$i.ls-iot.local\"" &
 done
 
 # Wait for all background processes to finish
