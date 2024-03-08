@@ -25,7 +25,9 @@
         enabled: yes
 
     - name: Install MicroK8s
-      command: snap install microk8s --classic
+      command: |
+        snap install microk8s --classic
+        snap install microceph --channel=latest/edge
       args:
         creates: /snap/bin/microk8s
 
