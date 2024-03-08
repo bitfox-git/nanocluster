@@ -17,6 +17,7 @@ After that, boot into Raspberry Pi OS and install the folowing software:
 - kubernetes-client (kubectl)
 - vs code
 - Open Lens or Seabird
+- ceph-common
 
 Setup the [flathub](https://flathub.org/setup/Raspberry%20Pi%20OS) and install [pods](https://flathub.org/apps/com.github.marhkb.Pods):
 
