@@ -13,9 +13,11 @@
     - name: Update DietPi
       command: /boot/dietpi/dietpi-update
 
-    - name: Install snapd with apt
+    - name: Install snapd and ceph with apt
       apt:
-        name: snapd
+        name: |
+          snapd
+          ceph
         state: present
 
     - name: Ensure snapd service is running
@@ -25,11 +27,14 @@
         enabled: yes
 
     - name: Install MicroK8s
-      command: |
-        snap install microk8s --classic
-        snap install microceph --channel=latest/edge
+      command: snap install microk8s --classic
       args:
         creates: /snap/bin/microk8s
+
+    - name: Install microceph
+      command: snap install microceph --channel=latest/edge
+      args:
+        creates: /snap/bin/microceph
 
     - name: Add the current user to the microk8s group
       user:
