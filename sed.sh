@@ -1,10 +1,10 @@
 #!/bin/sh
 sed -i "s/AUTO_SETUP_AUTOMATED=0/AUTO_SETUP_AUTOMATED=1/g" /mnt/dietpi.txt
 sed -i "s/AUTO_SETUP_AUTOSTART_TARGET_INDEX=0/AUTO_SETUP_AUTOSTART_TARGET_INDEX=7/g" /mnt/dietpi.txt
-sed -i "s/AUTO_SETUP_GLOBAL_PASSWORD=dietpi/AUTO_SETUP_GLOBAL_PASSWORD=neo${1}/g" /mnt/dietpi.txt
+sed -i "s/AUTO_SETUP_GLOBAL_PASSWORD=dietpi/AUTO_SETUP_GLOBAL_PASSWORD=neo${1}.ls-iot.local/g" /mnt/dietpi.txt
 sed -i "s/AUTO_SETUP_HEADLESS=0/AUTO_SETUP_HEADLESS=1/g" /mnt/dietpi.txt
 sed -i "s/AUTO_SETUP_KEYBOARD_LAYOUT=gb/AUTO_SETUP_KEYBOARD_LAYOUT=us/g" /mnt/dietpi.txt
-sed -i "s/AUTO_SETUP_NET_HOSTNAME=DietPi/AUTO_SETUP_NET_HOSTNAME=neo${1}/g" /mnt/dietpi.txt
+sed -i "s/AUTO_SETUP_NET_HOSTNAME=DietPi/AUTO_SETUP_NET_HOSTNAME=neo${1}.ls-iot.local/g" /mnt/dietpi.txt
 sed -i "s/AUTO_SETUP_NET_STATIC_DNS=9.9.9.9 149.112.112.112/AUTO_SETUP_NET_STATIC_DNS=192.168.107.1/g" /mnt/dietpi.txt
 sed -i "s/AUTO_SETUP_NET_STATIC_GATEWAY=192.168.0.1/AUTO_SETUP_NET_STATIC_GATEWAY=192.168.107.1/g" /mnt/dietpi.txt
 sed -i "s/AUTO_SETUP_NET_STATIC_IP=192.168.0.100/AUTO_SETUP_NET_STATIC_IP=192.168.107.10${1}/g" /mnt/dietpi.txt

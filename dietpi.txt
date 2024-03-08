@@ -38,7 +38,7 @@ AUTO_SETUP_NET_STATIC_DNS=192.168.107.1
 AUTO_SETUP_DHCP_TO_STATIC=0
 
 # Hostname
-AUTO_SETUP_NET_HOSTNAME=neo1
+AUTO_SETUP_NET_HOSTNAME=neo1.ls-iot.local
 
 # Force Ethernet speeds: 0=automatic speed | 10 = 10 Mbit/s | 100 = 100 Mbit/s etc.
 # - Use this when your Ethernet adapter has an unstable 1 Gbit/s link.
